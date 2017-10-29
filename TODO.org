@@ -5,16 +5,20 @@ A repository to test working with emacs and cider.
 ** DONE test pointmass falling because of gravity. Only 'y' movement.
    - State "DONE"       from "TODO"       [2017-10-29 Sun 13:06]
 
-** TODO test pointmass bouncing because gravity + floor. Only 'y' movement.
+** DONE test pointmass bouncing because gravity + floor. Only 'y' movement.
+   - State "DONE"       from "TODO"       [2017-10-29 Sun 19:34]
 
-** TODO test pointmass bouncing. Gravity + floor + dampening. Only 'y' movement
+** DONE test pointmass bouncing. Gravity + floor + dampening. Only 'y' movement
+   - State "DONE"       from "TODO"       [2017-10-29 Sun 19:34]
 
 ** DONE test pointmass with 'x' & 'y' movement.
    - State "DONE"       from "TODO"       [2017-10-29 Sun 13:06]
 
-** TODO test pointmass with x&y , floor and walls
+** DONE test pointmass with x&y , floor and walls
+   - State "DONE"       from "TODO"       [2017-10-29 Sun 19:34]
 
-** TODO Visualize pointmass + floor + walls + ceiling
+** DONE Visualize pointmass + floor + walls + ceiling
+   - State "DONE"       from "TODO"       [2017-10-29 Sun 19:34]
 
 ** TODO Connect pointmasses
 

@@ -43,13 +43,15 @@
 (defn setup []
   (quil/frame-rate  30)
   (quil/background 255)
-  (atom [{:x 3 :y 1 :oldx 0 :oldy 0}]))
+  (atom [{:x 3 :y 1 :oldx 0 :oldy 0}
+         {:x 100 :y 100 :oldx 100 :oldy 100}]))
 
 
 (defn draw [points]
   (quil/background 255)
   (quil/fill 0)
-  (quil/ellipse (:x (first @points)) (:y  (first @points)) 7 7))
+  (doseq [point @points]
+    (quil/ellipse (:x point) (:y point) 7 7)))
 
 
 (quil/defsketch verlet
