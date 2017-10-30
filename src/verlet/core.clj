@@ -29,10 +29,9 @@
       :else point)))
 
 
-(defn update-points [points]
-  (let [new-points (map update-point @points)]
-    (reset! points new-points)
-    points))
+(defn update-points [state]
+  (reset! state {:points (mapv update-point (:points @state))})
+  state)
 
 
 ;;;;;;;;;;;;;;;
@@ -43,15 +42,15 @@
 (defn setup []
   (quil/frame-rate  30)
   (quil/background 255)
-  (atom [{:x   3 :y   1 :oldx   0 :oldy    0}
-         {:x 100 :y 100 :oldx 100 :oldy  100}
-         {:x   0 :y 500 :oldx  -5 :oldy  524}]))
+  (atom {:points [{:x   3 :y   1 :oldx   0 :oldy    0}
+                  {:x 100 :y 100 :oldx 100 :oldy  100}
+                  {:x   0 :y 500 :oldx  -5 :oldy  524}]}))
 
 
-(defn draw [points]
+(defn draw [state]
   (quil/background 255)
   (quil/fill 0)
-  (doseq [point @points]
+  (doseq [point (:points @state)]
     (quil/ellipse (:x point) (:y point) 7 7)))
 
 
