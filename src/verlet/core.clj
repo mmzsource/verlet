@@ -24,12 +24,12 @@
 
 
 (defn update-points [state]
-  (swap! state :points (map-kv update-point (:points @state)))
+  (swap! state assoc :points (map-kv update-point (:points @state)))
   state)
 
 
 (defn apply-stick-constraints [state]
-  (swap! state :sticks (:sticks @state))
+  (swap! state assoc :sticks (:sticks @state))
   state)
 
 
@@ -50,7 +50,7 @@
 
 
 (defn apply-world-constraints [state]
-  (swap! state :points (map-kv constrain-point (:points @state)))
+  (swap! state assoc :points (map-kv constrain-point (:points @state)))
   state)
 
 
@@ -58,7 +58,8 @@
   (->> state
        (update-points)
        (apply-stick-constraints)
-       (apply-world-constraints)))
+       (apply-world-constraints))
+  state)
 
 
 ;;;;;;;;;;;;;;;
