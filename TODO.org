@@ -18,10 +18,139 @@ A repository to test working with emacs and cider.
    - State "DONE"       from "TODO"       [2017-10-29 Sun 19:34]
 
 ** DONE Visualize pointmass + floor + walls + ceiling
-   - State "DONE"       from "TODO"       [2017-10-29 Sun 19:34]
-
+** TODO Extract method apply-world-constraints (takes and returns a map of points like update-points)
+** TODO Create method apply-stick-constraints (takes and returns a map of points like update-points)
+** TODO Create threading macro:
+   -> @state
+      update-points
+      apply-stick-constraints
+      apply-world-constraints
+      reset! state
+      render state
 ** TODO Connect pointmasses
 
 ** TODO Mouse interaction with pointmasses
 
 ** TODO Cloth!
+
+Sketch of stick constraints:
+
+(ns verlet.core
+  (:require [quil.core :as quil]
+            [quil.middleware :as quil-mw]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;
+;; Physics Simulation ;;
+;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def height   500)   ;; world height
+(def width    500)   ;; world width
+(def bounce   0.9)   ;; 10% velocity loss after hitting world border
+(def gravity  0.5)   ;; world gravity
+(def friction 0.995) ;; 0.5% velocity loss in every step
+
+
+(defn map-kv [f coll]
+  (reduce-kv (fn [m k v] (assoc m k (f v))) (empty coll) coll))
+
+
+(defn distance-map [p0 p1]
+  (let [dx (- (:x p1) (:x p0))
+        dy (- (:y p1) (:y p0))
+        distance (Math/sqrt (+ (* dx dx) (* dy dy)))]
+    {:dx dx :dy dy :distance distance}))
+
+
+(defn update-point [{:keys [x y oldx oldy]}]
+  (let [vx    (* (- x oldx) friction)
+        vy    (* (- y oldy) friction)
+        point {:x (+ x vx) :y (+ y vy gravity) :oldx x :oldy y}]
+    (cond
+      ;; Hit the floor
+      (> y height) {:x (:x point) :y height :oldx (:oldx point) :oldy (+ height (* vy bounce))}
+      ;; Hit the ceiling
+      (< y 0)      {:x (:x point) :y 0 :oldx (:oldx point) :oldy (* vy bounce)}
+      ;; Hit the left wall
+      (< x 0)      {:x 0 :y (:y point) :oldx (* vx bounce) :oldy (:oldy point)}
+      ;; Hit the right wall
+      (> x width) {:x width :y (:y point) :oldx (+ width (* vx bounce)) :oldy (:oldy point)}
+      ;; Free movement
+      :else point)))
+
+
+(defn update-points [state]
+  (map-kv update-point (:points @state)))
+
+
+(defn calc-stick-constraint [stick p0 p1]
+  (let [distance-map (distance-map p0 p1)
+        difference   (- (:length stick) (:distance distance-map))
+        percentage   (/ (difference (/  (:distance distance-map) 2)))
+        offsetX      (* (:dx distance-map) percentage)
+        offsetY      (* (:dy distance-map) percentage)
+        p0-new       {:x    (- (:x p0) offsetX)
+                      :y    (- (:y p0) offsetY)
+                      :oldx (:oldx p0)
+                      :oldy (:oldy p0)}
+        p1-new       {:x    (- (:x p1) offsetX)
+                      :y    (- (:y p1) offsetY)
+                      :oldx (:oldx p1)
+                      :oldy (:oldy p1)}]
+    [p0-new p1-new]))
+
+
+(defn calc-stick-constraints [state]
+  (let [points (:points @state)
+        sticks (:sticks @state)]
+     (:sticks @state)))
+
+
+(defn update-state [state]
+  (let [new-points (update-points state)
+        new-sticks (update-sticks state)]
+    (reset! state {:points new-points :sticks new-sticks}))
+  state)
+
+
+;;;;;;;;;;;;;;;
+;; Rendering ;;
+;;;;;;;;;;;;;;;
+
+
+(defn setup []
+  (quil/frame-rate  30)
+  (quil/background 255)
+  (let [points {:p0 {:x   3 :y   1 :oldx   0 :oldy    0}
+                :p1 {:x 100 :y 100 :oldx 100 :oldy  100}
+                :p2 {:x   0 :y 500 :oldx  -5 :oldy  524}}
+        sticks [{:links  [:p0 :p1]
+                 :length (:distance (distance-map (:p0 points) (:p1 points)))}]]
+    (atom {:points points
+           :sticks sticks})))
+
+
+(defn draw [state]
+  (quil/background 255)
+  (quil/fill 0)
+  (doseq [point (vals (:points @state))]
+    (quil/ellipse (:x point) (:y point) 7 7))
+  (doseq [stick (:sticks @state)]
+    (let [points (:points @state)
+          p0     ((first (:links stick)) points)
+          p1     ((last  (:links stick)) points)]
+      (quil/line (:x p0) (:y p0) (:x p1) (:y p1)))))
+
+
+(quil/defsketch verlet
+  :title      "verlet"
+  :setup      setup
+  :update     update-state
+  :draw       draw
+  :size       [width height]
+  :middleware [quil-mw/fun-mode])
+
+
+(defn -main
+  "I don't do a whole lot ... yet."
+  [& args]
+  (println "Hello, World!"))
