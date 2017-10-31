@@ -119,14 +119,14 @@
                 :p1 {:x 100 :y 100 :oldx 100 :oldy 100}
                 :p2 {:x   0 :y 500 :oldx  -5 :oldy 524}
                 :p3 {:x  25 :y 475 :oldx  -5 :oldy 525}
-                :p4 {:x 250 :y  50 :oldx 250 :oldy 50 :pinned true}
-                :p5 {:x 299 :y   1 :oldx 299 :oldy  1}}
+                :p4 {:x 250 :y 100 :oldx 250 :oldy 100 :pinned true}
+                :p5 {:x 350 :y   1 :oldx 350 :oldy  1}}
         sticks [{:links  [:p0 :p1]
                  :length (:distance (distance-map (:p0 points) (:p1 points)))}
                 {:links  [:p2 :p3]
                  :length (:distance (distance-map (:p2 points) (:p3 points)))}
                 {:links  [:p4 :p5]
-                 :length 50}]]
+                 :length (:distance (distance-map (:p4 points) (:p5 points)))}]]
     (atom {:points points
            :sticks sticks})))
 
