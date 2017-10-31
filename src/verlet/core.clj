@@ -56,16 +56,6 @@
     [(if (:pinned p0) p0 p0-new) (if (:pinned p1) p1 p1-new)]))
 
 
-(defn apply-stick-constraint [state stick]
-  (let [p0-key     (first  (:links stick))
-        p0         (p0-key (:points @state))
-        p1-key     (last   (:links stick))
-        p1         (p1-key (:points @state))
-        new-points (calc-stick-constraint stick p0 p1)]
-    (swap! state assoc-in [:points p0-key] (first new-points))
-    (swap! state assoc-in [:points p1-key] (last  new-points))))
-
-
 (defn apply-stick-constraints [state]
   (doseq [stick (:sticks @state)]
     (let [p0-key     (first  (:links stick))
