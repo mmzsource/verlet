@@ -44,4 +44,6 @@ A repository to test working with emacs and cider.
 ** TODO Cloth! (zie mail link voor cloth generatie)
 ** DONE Keyboard interaction to reset
    - State "DONE"       from "TODO"       [2017-11-03 Fri 13:02]
-** TODO Mouse interaction with pointmasses
+** DONE Mouse interaction with pointmasses
+   - State "DONE"       from "TODO"       [2017-11-03 Fri 17:49]
+** TODO Create world where slow framerate clearly shows how next step is calculated
