@@ -41,9 +41,12 @@ A repository to test working with emacs and cider.
    - State "DONE"       from "TODO"       [2017-11-03 Fri 11:39]
 ** DONE Make particles file
    - State "DONE"       from "TODO"       [2017-11-03 Fri 11:49]
-** TODO Cloth! (zie mail link voor cloth generatie)
+** DONE Cloth! (zie mail link voor cloth generatie)
+   - State "DONE"       from "TODO"       [2017-11-03 Fri 19:49]
 ** DONE Keyboard interaction to reset
    - State "DONE"       from "TODO"       [2017-11-03 Fri 13:02]
 ** DONE Mouse interaction with pointmasses
    - State "DONE"       from "TODO"       [2017-11-03 Fri 17:49]
+** TODO Make cloth less stiff
+** TODO Break link when stretched beyond max
 ** TODO Create world where slow framerate clearly shows how next step is calculated

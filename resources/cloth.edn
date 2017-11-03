@@ -1,0 +1,110 @@
+{:points { :p0 {:x 100 :y 100 :oldx 100 :oldy 100 :pinned true}
+           :p1 {:x 150 :y 100 :oldx 150 :oldy 100 :pinned true}
+           :p2 {:x 200 :y 100 :oldx 200 :oldy 100 :pinned true}
+           :p3 {:x 250 :y 100 :oldx 250 :oldy 100 :pinned true}
+           :p4 {:x 300 :y 100 :oldx 300 :oldy 100 :pinned true}
+           :p5 {:x 350 :y 100 :oldx 350 :oldy 100 :pinned true}
+           :p6 {:x 400 :y 100 :oldx 400 :oldy 100 :pinned true}
+
+           :p7 {:x 100 :y 150 :oldx 100 :oldy 150}
+           :p8 {:x 150 :y 150 :oldx 150 :oldy 150}
+           :p9 {:x 200 :y 150 :oldx 200 :oldy 150}
+          :p10 {:x 250 :y 150 :oldx 250 :oldy 150}
+          :p11 {:x 300 :y 150 :oldx 300 :oldy 150}
+          :p12 {:x 350 :y 150 :oldx 350 :oldy 150}
+          :p13 {:x 400 :y 150 :oldx 400 :oldy 150}
+
+          :p14 {:x 100 :y 200 :oldx 100 :oldy 200}
+          :p15 {:x 150 :y 200 :oldx 150 :oldy 200}
+          :p16 {:x 200 :y 200 :oldx 200 :oldy 200}
+          :p17 {:x 250 :y 200 :oldx 250 :oldy 200}
+          :p18 {:x 300 :y 200 :oldx 300 :oldy 200}
+          :p19 {:x 350 :y 200 :oldx 350 :oldy 200}
+          :p20 {:x 400 :y 200 :oldx 400 :oldy 200}
+
+          :p21 {:x 100 :y 250 :oldx 100 :oldy 250}
+          :p22 {:x 150 :y 250 :oldx 150 :oldy 250}
+          :p23 {:x 200 :y 250 :oldx 200 :oldy 250}
+          :p24 {:x 250 :y 250 :oldx 250 :oldy 250}
+          :p25 {:x 300 :y 250 :oldx 300 :oldy 250}
+          :p26 {:x 350 :y 250 :oldx 350 :oldy 250}
+          :p27 {:x 400 :y 250 :oldx 400 :oldy 250}
+
+          :p28 {:x 100 :y 300 :oldx 100 :oldy 300}
+          :p29 {:x 150 :y 300 :oldx 150 :oldy 300}
+          :p30 {:x 200 :y 300 :oldx 200 :oldy 300}
+          :p31 {:x 250 :y 300 :oldx 250 :oldy 300}
+          :p32 {:x 300 :y 300 :oldx 300 :oldy 300}
+          :p33 {:x 350 :y 300 :oldx 350 :oldy 300}
+          :p34 {:x 400 :y 300 :oldx 400 :oldy 300}}
+
+ :sticks [{:links  [ :p0  :p1] :length 50}
+          {:links  [ :p1  :p2] :length 50}
+          {:links  [ :p2  :p3] :length 50}
+          {:links  [ :p3  :p4] :length 50}
+          {:links  [ :p4  :p5] :length 50}
+          {:links  [ :p5  :p6] :length 50}
+
+          {:links  [ :p7  :p8] :length 50}
+          {:links  [ :p8  :p9] :length 50}
+          {:links  [ :p9 :p10] :length 50}
+          {:links  [:p10 :p11] :length 50}
+          {:links  [:p11 :p12] :length 50}
+          {:links  [:p12 :p13] :length 50}
+
+          {:links  [:p14 :p15] :length 50}
+          {:links  [:p15 :p16] :length 50}
+          {:links  [:p16 :p17] :length 50}
+          {:links  [:p17 :p18] :length 50}
+          {:links  [:p18 :p19] :length 50}
+          {:links  [:p19 :p20] :length 50}
+
+          {:links  [:p21 :p22] :length 50}
+          {:links  [:p22 :p23] :length 50}
+          {:links  [:p23 :p24] :length 50}
+          {:links  [:p24 :p25] :length 50}
+          {:links  [:p25 :p26] :length 50}
+          {:links  [:p26 :p27] :length 50}
+
+          {:links  [:p28 :p29] :length 50}
+          {:links  [:p29 :p30] :length 50}
+          {:links  [:p30 :p31] :length 50}
+          {:links  [:p31 :p32] :length 50}
+          {:links  [:p32 :p33] :length 50}
+          {:links  [:p33 :p34] :length 50}
+
+          {:links  [ :p0  :p7] :length 50}
+          {:links  [ :p7 :p14] :length 50}
+          {:links  [:p14 :p21] :length 50}
+          {:links  [:p21 :p28] :length 50}
+
+          {:links  [ :p1  :p8] :length 50}
+          {:links  [ :p8 :p15] :length 50}
+          {:links  [:p15 :p22] :length 50}
+          {:links  [:p22 :p29] :length 50}
+
+          {:links  [ :p2  :p9] :length 50}
+          {:links  [ :p9 :p16] :length 50}
+          {:links  [:p16 :p23] :length 50}
+          {:links  [:p23 :p30] :length 50}
+
+          {:links  [ :p3 :p10] :length 50}
+          {:links  [:p10 :p17] :length 50}
+          {:links  [:p17 :p24] :length 50}
+          {:links  [:p24 :p31] :length 50}
+
+          {:links  [ :p4 :p11] :length 50}
+          {:links  [:p11 :p18] :length 50}
+          {:links  [:p18 :p25] :length 50}
+          {:links  [:p25 :p32] :length 50}
+
+          {:links  [ :p5 :p12] :length 50}
+          {:links  [:p12 :p19] :length 50}
+          {:links  [:p19 :p26] :length 50}
+          {:links  [:p26 :p33] :length 50}
+
+          {:links  [ :p6 :p13] :length 50}
+          {:links  [:p13 :p20] :length 50}
+          {:links  [:p20 :p27] :length 50}
+          {:links  [:p27 :p34] :length 50}
+          ]}

@@ -27,7 +27,7 @@
 (def friction 0.995) ;; 0.5% velocity loss in every step
 
 
-(def world (load-world (load-a-file "flying-sticks.edn")))
+(def world (load-world (load-a-file "cloth.edn")))
 
 (defn map-kv [f coll]
   (reduce-kv (fn [m k v] (assoc m k (f v))) (empty coll) coll))
