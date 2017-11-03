@@ -39,7 +39,8 @@ A repository to test working with emacs and cider.
    (map partial ... (:sticks @State)
 ** DONE Edn file per 'world'. Initiate with edn file
    - State "DONE"       from "TODO"       [2017-11-03 Fri 11:39]
-** TODO Make particles file
+** DONE Make particles file
+   - State "DONE"       from "TODO"       [2017-11-03 Fri 11:49]
 ** TODO Cloth! (zie mail link voor cloth generatie)
 ** TODO Keyboard interaction to reset
 ** TODO Mouse interaction with pointmasses

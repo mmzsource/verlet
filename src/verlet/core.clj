@@ -118,7 +118,7 @@
 (defn setup []
   (quil/frame-rate  30)
   (quil/background 255)
-  (atom (load-world (load-a-file "flying-sticks.edn"))))
+  (atom (load-world (load-a-file "particles.edn"))))
 
 
 (defn draw [state]

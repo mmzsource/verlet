@@ -1,0 +1,5 @@
+{:points {:p0 {:x   3 :y   1 :oldx   0 :oldy   0}
+          :p1 {:x 100 :y 100 :oldx 100 :oldy 100}
+          :p2 {:x   0 :y 500 :oldx  -5 :oldy 524}
+          :p3 {:x  25 :y 475 :oldx  -5 :oldy 525}}
+ :sticks []}
