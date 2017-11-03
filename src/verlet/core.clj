@@ -1,6 +1,19 @@
 (ns verlet.core
-  (:require [quil.core :as quil]
+  (:require [clojure.java.io :as io]
+            [clojure.edn :as edn]
+            [quil.core :as quil]
             [quil.middleware :as quil-mw]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;
+;;     Input data     ;;
+;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn load-a-file [filename]
+  (io/file (io/resource filename)))
+
+
+(defn load-world [file]
+  (edn/read-string (slurp file)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Physics Simulation ;;
@@ -105,20 +118,7 @@
 (defn setup []
   (quil/frame-rate  30)
   (quil/background 255)
-  (let [points {:p0 {:x   3 :y   1 :oldx   0 :oldy   0}
-                :p1 {:x 100 :y 100 :oldx 100 :oldy 100}
-                :p2 {:x   0 :y 500 :oldx  -5 :oldy 524}
-                :p3 {:x  25 :y 475 :oldx  -5 :oldy 525}
-                :p4 {:x 250 :y 100 :oldx 250 :oldy 100 :pinned true}
-                :p5 {:x 350 :y   1 :oldx 350 :oldy  1}}
-        sticks [{:links  [:p0 :p1]
-                 :length (:distance (distance-map (:p0 points) (:p1 points)))}
-                {:links  [:p2 :p3]
-                 :length (:distance (distance-map (:p2 points) (:p3 points)))}
-                {:links  [:p4 :p5]
-                 :length (:distance (distance-map (:p4 points) (:p5 points)))}]]
-    (atom {:points points
-           :sticks sticks})))
+  (atom (load-world (load-a-file "flying-sticks.edn"))))
 
 
 (defn draw [state]
@@ -140,9 +140,3 @@
   :draw       draw
   :size       [width height]
   :middleware [quil-mw/fun-mode])
-
-
-(defn -main
-  "I don't do a whole lot ... yet."
-  [& args]
-  (println "Hello, World!"))

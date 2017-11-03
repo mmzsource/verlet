@@ -32,8 +32,14 @@ A repository to test working with emacs and cider.
       render state
 ** DONE Connect pointmasses
    - State "DONE"       from "TODO"       [2017-10-30 Mon 23:04]
-** TODO Make it work with multiple sticks
+** DONE Make it work with multiple sticks
+   - State "DONE"       from "WAIT"       [2017-11-03 Fri 10:23]
+   - State "WAIT"       from "BUSY"       [2017-11-03 Fri 10:23]
+   - State "BUSY"       from "TODO"       [2017-11-03 Fri 10:23]
    (map partial ... (:sticks @State)
-** TODO Edn file per 'world'. Initiate with edn file
+** DONE Edn file per 'world'. Initiate with edn file
+   - State "DONE"       from "TODO"       [2017-11-03 Fri 11:39]
+** TODO Make particles file
 ** TODO Cloth! (zie mail link voor cloth generatie)
+** TODO Keyboard interaction to reset
 ** TODO Mouse interaction with pointmasses
