@@ -8,6 +8,7 @@
 ;;     Input data     ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
+
 (defn load-a-file [filename]
   (io/file (io/resource filename)))
 
@@ -15,15 +16,20 @@
 (defn load-world [file]
   (edn/read-string (slurp file)))
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Physics Simulation ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 (def height   500)   ;; world height
 (def width    500)   ;; world width
 (def bounce   0.9)   ;; 10% velocity loss after hitting world border
 (def gravity  0.5)   ;; world gravity
 (def friction 0.995) ;; 0.5% velocity loss in every step
+
+
+(def world (load-world (load-a-file "flying-sticks.edn")))
 
 
 (defn map-kv [f coll]
@@ -118,7 +124,7 @@
 (defn setup []
   (quil/frame-rate  30)
   (quil/background 255)
-  (atom (load-world (load-a-file "particles.edn"))))
+  (atom world))
 
 
 (defn draw [state]
@@ -133,10 +139,17 @@
       (quil/line (:x p0) (:y p0) (:x p1) (:y p1)))))
 
 
+(defn keypressed [state event]
+  (if (= \r (:raw-key event))
+    (reset! state world))
+  state)
+
+
 (quil/defsketch verlet
-  :title      "verlet"
-  :setup      setup
-  :update     update-state
-  :draw       draw
-  :size       [width height]
-  :middleware [quil-mw/fun-mode])
+  :title       "verlet"
+  :setup       setup
+  :update      update-state
+  :draw        draw
+  :key-pressed keypressed
+  :size        [width height]
+  :middleware  [quil-mw/fun-mode])

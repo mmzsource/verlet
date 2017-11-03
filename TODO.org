@@ -42,5 +42,6 @@ A repository to test working with emacs and cider.
 ** DONE Make particles file
    - State "DONE"       from "TODO"       [2017-11-03 Fri 11:49]
 ** TODO Cloth! (zie mail link voor cloth generatie)
-** TODO Keyboard interaction to reset
+** DONE Keyboard interaction to reset
+   - State "DONE"       from "TODO"       [2017-11-03 Fri 13:02]
 ** TODO Mouse interaction with pointmasses
