@@ -24,35 +24,37 @@ A repository to test working with emacs and cider.
    - State "DONE"       from "TODO"       [2017-10-30 Mon 23:04]
 ** DONE Create threading macro:
    - State "DONE"       from "TODO"       [2017-10-30 Mon 23:04]
-   -> @state
-      update-points
-      apply-stick-constraints
-      apply-world-constraints
-      reset! state
-      render state
 ** DONE Connect pointmasses
    - State "DONE"       from "TODO"       [2017-10-30 Mon 23:04]
 ** DONE Make it work with multiple sticks
-   - State "DONE"       from "WAIT"       [2017-11-03 Fri 10:23]
-   - State "WAIT"       from "BUSY"       [2017-11-03 Fri 10:23]
-   - State "BUSY"       from "TODO"       [2017-11-03 Fri 10:23]
-   (map partial ... (:sticks @State)
+   - State "DONE"       from "TODO"       [2017-11-03 Fri 10:23]
 ** DONE Edn file per 'world'. Initiate with edn file
    - State "DONE"       from "TODO"       [2017-11-03 Fri 11:39]
 ** DONE Make particles file
    - State "DONE"       from "TODO"       [2017-11-03 Fri 11:49]
-** DONE Cloth! (zie mail link voor cloth generatie)
+** DONE Cloth!
    - State "DONE"       from "TODO"       [2017-11-03 Fri 19:49]
 ** DONE Keyboard interaction to reset
    - State "DONE"       from "TODO"       [2017-11-03 Fri 13:02]
 ** DONE Mouse interaction with pointmasses
    - State "DONE"       from "TODO"       [2017-11-03 Fri 17:49]
-** TODO Refactor
-   - [ ] Move constants to world files? -> proximity + easier to test
-   - [ ] Call defsketch from another function which is called in main (easier to
+** DONE Cleanup
+   - State "DONE"       from "TODO"       [2017-11-04 Sat 12:51]
+   - [X] Call defsketch from another function which is called in main (easier to
      test)
-   - [X] Start using a point Record (maybe no extra functions needed)
-   - [ ]
-** TODO Make cloth less stiff
-** TODO Break link when stretched beyond max
-** TODO Create world where slow framerate clearly shows how next step is calculated
+   - [X] Use Point Record (maybe no extra functions needed)
+   - [X] Apply good enough styling
+   - [X] Write README.
+** CANCELLED Make cloth less stiff (generate cloth?)
+   - State "CANCELLED"  from "TODO"       [2017-11-04 Sat 12:51]
+   Trivial. Not the essence of what I started this project for
+** CANCELLED Break stick when stretched beyond a max length
+   - State "CANCELLED"  from "TODO"       [2017-11-04 Sat 12:51]
+   Trivial. Not the essence of what I started this project for
+** CANCELLED Create world where slow framerate clearly shows how next step is calculated
+   - State "CANCELLED"  from "TODO"       [2017-11-04 Sat 12:51]
+   Can already be done by simply changing framerate (and add a-world.edn if you
+   want to)
+** CANCELLED World generators (e.g. generate cloth)
+   - State "CANCELLED"  from ""           [2017-11-04 Sat 12:52]
+   Trivial. Not the essence of what I started this project for

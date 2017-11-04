@@ -119,7 +119,6 @@
 ;; Rendering and user interaction ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
 (defn setup []
   (quil/frame-rate  30)
   (quil/background 255)
@@ -180,14 +179,16 @@
   state)
 
 
-(quil/defsketch verlet
-  :title          "verlet"
-  :size           [width height]
-  :setup          setup
-  :update         update-state
-  :draw           draw
-  :key-pressed    key-pressed
-  :mouse-pressed  mouse-pressed
-  :mouse-dragged  mouse-dragged
-  :mouse-released mouse-released
-  :middleware     [quil-mw/fun-mode])
+(defn -main []
+  (quil/sketch
+    :host           -main
+    :title          "verlet"
+    :size           [width height]
+    :setup          setup
+    :update         update-state
+    :draw           draw
+    :key-pressed    key-pressed
+    :mouse-pressed  mouse-pressed
+    :mouse-dragged  mouse-dragged
+    :mouse-released mouse-released
+    :middleware     [quil-mw/fun-mode]))
