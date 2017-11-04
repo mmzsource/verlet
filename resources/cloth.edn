@@ -106,5 +106,4 @@
           {:links  [ :p6 :p13] :length 50}
           {:links  [:p13 :p20] :length 50}
           {:links  [:p20 :p27] :length 50}
-          {:links  [:p27 :p34] :length 50}
-          ]}
+          {:links  [:p27 :p34] :length 50}]}

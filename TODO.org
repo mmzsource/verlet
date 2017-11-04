@@ -47,6 +47,12 @@ A repository to test working with emacs and cider.
    - State "DONE"       from "TODO"       [2017-11-03 Fri 13:02]
 ** DONE Mouse interaction with pointmasses
    - State "DONE"       from "TODO"       [2017-11-03 Fri 17:49]
+** TODO Refactor
+   - [ ] Move constants to world files? -> proximity + easier to test
+   - [ ] Call defsketch from another function which is called in main (easier to
+     test)
+   - [X] Start using a point Record (maybe no extra functions needed)
+   - [ ]
 ** TODO Make cloth less stiff
 ** TODO Break link when stretched beyond max
 ** TODO Create world where slow framerate clearly shows how next step is calculated

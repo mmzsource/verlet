@@ -5,20 +5,23 @@
             [quil.middleware :as quil-mw]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
-;;     Input data     ;;
+;;      Helpers       ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 (defn load-a-file [filename]
   (io/file (io/resource filename)))
 
+
 (defn load-world [file]
   (edn/read-string (slurp file)))
+
+
+(defn map-kv [f coll]
+  (reduce-kv (fn [m k v] (assoc m k (f v))) (empty coll) coll))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Physics Simulation ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 (def height   500)   ;; world height
 (def width    500)   ;; world width
@@ -26,11 +29,9 @@
 (def gravity  0.5)   ;; world gravity
 (def friction 0.995) ;; 0.5% velocity loss in every step
 
+(def world (load-world (load-a-file "particles.edn")))
 
-(def world (load-world (load-a-file "cloth.edn")))
-
-(defn map-kv [f coll]
-  (reduce-kv (fn [m k v] (assoc m k (f v))) (empty coll) coll))
+(defrecord Point [x y oldx oldy pinned])
 
 (defn distance-map [p0 p1]
   (let [dx (- (:x p1) (:x p0))
@@ -38,16 +39,19 @@
         distance (Math/sqrt (+ (* dx dx) (* dy dy)))]
     {:dx dx :dy dy :distance (if (= 0.0 distance) 0.0000000000001 distance)}))
 
-(defn update-point [{:keys [x y oldx oldy pinned]}]
+
+(defn update-point [{:keys [x y oldx oldy pinned] :as point}]
   (let [vx (* (- x oldx) friction)
         vy (* (- y oldy) friction)]
     (if pinned
-      {:x x :y y :oldx oldx :oldy oldy :pinned pinned}
-      {:x (+ x vx) :y (+ y vy gravity) :oldx x :oldy y})))
+      point
+      (->Point (+ x vx) (+ y vy gravity) x y pinned))))
+
 
 (defn update-points [state]
   (swap! state assoc :points (map-kv update-point (:points @state)))
   state)
+
 
 (defn calc-stick-constraint [stick p0 p1]
   (let [distance-map (distance-map p0 p1)
@@ -55,17 +59,20 @@
         percentage   (/ (/ difference (:distance distance-map)) 2)
         offsetX      (* (:dx distance-map) percentage)
         offsetY      (* (:dy distance-map) percentage)
-        p0-new       {:x      (- (:x p0) offsetX)
-                      :y      (- (:y p0) offsetY)
-                      :oldx   (:oldx p0)
-                      :oldy   (:oldy p0)
-                      :pinned (:pinned p0)}
-        p1-new       {:x      (+ (:x p1) offsetX)
-                      :y      (+ (:y p1) offsetY)
-                      :oldx   (:oldx p1)
-                      :oldy   (:oldy p1)
-                      :pinned (:pinned p1)}]
+        p0-new       (->Point
+                      (- (:x p0) offsetX)
+                      (- (:y p0) offsetY)
+                      (:oldx p0)
+                      (:oldy p0)
+                      (:pinned p0))
+        p1-new       (->Point
+                      (+ (:x p1) offsetX)
+                      (+ (:y p1) offsetY)
+                      (:oldx p1)
+                      (:oldy p1)
+                      (:pinned p1))]
     [(if (:pinned p0) p0 p0-new) (if (:pinned p1) p1 p1-new)]))
+
 
 (defn apply-stick-constraints [state]
   (doseq [stick (:sticks @state)]
@@ -78,24 +85,27 @@
       (swap! state assoc-in [:points p1-key] (last  new-points))))
   state)
 
+
 (defn constrain-point [{:keys [x y oldx oldy pinned] :as point}]
   (let [vx (* (- x oldx) friction)
         vy (* (- y oldy) friction)]
     (cond
       ;; Hit the floor
-      (> y height) {:x x :y height :oldx oldx :oldy (+ height (* vy bounce)) :pinned pinned}
+      (> y height) (->Point x height oldx (+ height (* vy bounce)) pinned)
       ;; Hit the ceiling
-      (< y 0)      {:x x :y 0 :oldx oldx :oldy (* vy bounce) :pinned pinned}
+      (< y 0)      (->Point x 0 oldx (* vy bounce) pinned)
       ;; Hit the left wall
-      (< x 0)      {:x 0 :y y :oldx (* vx bounce) :oldy oldy :pinned pinned}
+      (< x 0)      (->Point 0 y (* vx bounce) oldy pinned)
       ;; Hit the right wall
-      (> x width) {:x width :y y :oldx (+ width (* vx bounce)) :oldy oldy :pinned pinned}
+      (> x width)  (->Point width y (+ width (* vx bounce)) oldy pinned)
       ;; Free movement
       :else point)))
+
 
 (defn apply-world-constraints [state]
   (swap! state assoc :points (map-kv constrain-point (:points @state)))
   state)
+
 
 (defn update-state [state]
   (->> state
@@ -103,6 +113,7 @@
        (apply-stick-constraints)
        (apply-world-constraints))
   state)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Rendering and user interaction ;;
@@ -128,28 +139,29 @@
 
 
 (defn key-pressed [state event]
-  (if (= \r (:raw-key event))
-    (reset! state world))
+  (let [k (:raw-key event)]
+    (cond
+      ;; cloth
+      (= \c k) (reset! state (load-world (load-a-file "cloth.edn")))
+      ;; particles
+      (= \p k) (reset! state (load-world (load-a-file "particles.edn")))
+      ;; sticks
+      (= \s k) (reset! state (load-world (load-a-file "sticks.edn")))))
   state)
 
 
-(defn mouse-point [mouse-event]
-  {:x (:x mouse-event)
-   :y (:y mouse-event)
-   :oldx (:p-x mouse-event)
-   :oldy (:p-y mouse-event)
-   :pinned nil})
+(defn mouse-point [{:keys [x y p-x p-y]}]
+  (->Point x y p-x p-y nil))
 
 
 (defn near-mouse-press? [mouse-point point]
   (let [distance (distance-map mouse-point (val point))]
-    (and
-     (< (Math/abs (:dx distance)) 5)
-     (< (Math/abs (:dy distance)) 5))))
+    (and (< (Math/abs (:dx distance)) 10)
+         (< (Math/abs (:dy distance)) 10))))
 
 
 (defn mouse-pressed [state event]
-  (let [point (some #(when (near-mouse-press? (mouse-point event) %) % ) (:points @state))]
+  (let [point (some #(when (near-mouse-press? (mouse-point event) %) %) (:points @state))]
     (if (nil? point)
       (swap! state assoc :dragging nil)
       (swap! state assoc :dragging (key point))))
