@@ -86,19 +86,21 @@
   state)
 
 
+(defn hit-floor?       [y] (> y height))
+(defn hit-ceiling?     [y] (< y 0))
+(defn hit-left-wall?   [x] (< x 0))
+(defn hit-right-wall?  [x] (> x width))
+
+
 (defn constrain-point [{:keys [x y oldx oldy pinned] :as point}]
   (let [vx (* (- x oldx) friction)
         vy (* (- y oldy) friction)]
     (cond
-      ;; Hit the floor
-      (> y height) (->Point x height oldx (+ height (* vy bounce)) pinned)
-      ;; Hit the ceiling
-      (< y 0)      (->Point x 0 oldx (* vy bounce) pinned)
-      ;; Hit the left wall
-      (< x 0)      (->Point 0 y (* vx bounce) oldy pinned)
-      ;; Hit the right wall
-      (> x width)  (->Point width y (+ width (* vx bounce)) oldy pinned)
-      ;; Free movement
+      (hit-floor?      y) (->Point x height oldx (+ height (* vy bounce)) pinned)
+      (hit-ceiling?    y) (->Point x 0 oldx (* vy bounce) pinned)
+      (hit-left-wall?  x) (->Point 0 y (* vx bounce) oldy pinned)
+      (hit-right-wall? x) (->Point width y (+ width (* vx bounce)) oldy pinned)
+      ;; else: free movement
       :else point)))
 
 
@@ -140,11 +142,8 @@
 (defn key-pressed [state event]
   (let [k (:raw-key event)]
     (cond
-      ;; cloth
       (= \c k) (reset! state (load-world (load-a-file "cloth.edn")))
-      ;; particles
       (= \p k) (reset! state (load-world (load-a-file "particles.edn")))
-      ;; sticks
       (= \s k) (reset! state (load-world (load-a-file "sticks.edn")))))
   state)
 

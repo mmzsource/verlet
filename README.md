@@ -4,7 +4,7 @@ This repo uses verlet integration to simulate a world with:
 
 - Particles
 - Sticks connecting particles
-- A Cloth
+- A cloth
 
 It was mostly inspired by [this paper by Thomas
 Jakobsen](http://graphics.cs.cmu.edu/nsp/course/15-869/2006/papers/jakobsen.htm).
@@ -32,8 +32,8 @@ Keybindings:
 
 Mouse interactions:
 
-- Click and drag any 'point'
-- 'unpin' a pinned point
+- Click and drag any point
+- Unpin a pinned point
 
 ## License
 
