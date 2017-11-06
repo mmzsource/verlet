@@ -58,3 +58,4 @@ A repository to test working with emacs and cider.
 ** CANCELLED World generators (e.g. generate cloth)
    - State "CANCELLED"  from ""           [2017-11-04 Sat 12:52]
    Trivial. Not the essence of what I started this project for
+** TODO Fix sticks moving out of the screen
