@@ -49,7 +49,7 @@
 
 
 (defn update-points [state]
-  (swap! state assoc :points (map-kv update-point (:points @state)))
+  (swap! state update :points (partial map-kv update-point))
   state)
 
 
@@ -105,7 +105,7 @@
 
 
 (defn apply-world-constraints [state]
-  (swap! state assoc :points (map-kv constrain-point (:points @state)))
+  (swap! state update :points (partial map-kv constrain-point))
   state)
 
 
