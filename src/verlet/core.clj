@@ -9,14 +9,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn load-a-file [filename]
+  "Takes a filename as input and converts it to a file"
   (io/file (io/resource filename)))
 
 
-(defn load-world [file]
+(defn load-world
+  "Takes a file as input and converts it to a clojure datastructure"
+  [file]
   (edn/read-string (slurp file)))
 
 
-(defn map-kv [f coll]
+(defn map-kv
+  "Takes a function and a map as input and returns the result of applying the
+  function to the value of each key."
+  [f coll]
   (reduce-kv (fn [m k v] (assoc m k (f v))) (empty coll) coll))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -33,14 +39,22 @@
 
 (defrecord Point [x y oldx oldy pinned])
 
-(defn distance-map [p0 p1]
+(defn distance-map
+  "Calculates distances between 2 points and returns a map with dx, dy and
+  distance. To prevent division by zero, returns a little more than zero when
+  distance happens to be exactly zero."
+  [p0 p1]
   (let [dx       (- (:x p1) (:x p0))
         dy       (- (:y p1) (:y p0))
         distance (Math/sqrt (+ (* dx dx) (* dy dy)))]
     {:dx dx :dy dy :distance (if (= 0.0 distance) 0.0000000000001 distance)}))
 
 
-(defn update-point [{:keys [x y oldx oldy pinned] :as point}]
+(defn update-point
+  "Takes a point as input and returns the old point if the point is pinned and
+  a newly constructed point otherwise. The newly constructed point will take
+  the points' velocity and the specified friction and gravity into account."
+  [{:keys [x y oldx oldy pinned] :as point}]
   (let [vx (* (- x oldx) friction)
         vy (* (- y oldy) friction)]
     (if pinned
@@ -48,12 +62,21 @@
       (->Point (+ x vx) (+ y vy gravity) x y pinned))))
 
 
-(defn update-points [state]
+(defn update-points
+  "Takes the world state as input, updates all the points and returns the new
+  world state."
+  [state]
   (swap! state update :points (partial map-kv update-point))
   state)
 
 
-(defn calc-stick-constraint [stick p0 p1]
+(defn calc-stick-constraint
+  "Takes 2 points and the stick connecting them as input and calculates the new
+  positions of the points taking the sticks' length into account. It calculates
+  the percentage difference between the actual distance of the 2 points and the
+  length of the stick. It then moves both points towards the correct length of
+  their connecting stick. That is, if the point isn't 'pinned' in the world"
+  [stick p0 p1]
   (let [distance-map (distance-map p0 p1)
         difference   (- (:length stick) (:distance distance-map))
         percentage   (/ (/ difference (:distance distance-map)) 2)
@@ -74,7 +97,10 @@
     [(if (:pinned p0) p0 p0-new) (if (:pinned p1) p1 p1-new)]))
 
 
-(defn apply-stick-constraints [state]
+(defn apply-stick-constraints
+  "Takes the world state as input, applies stick constraints and returns the
+  new world state."
+  [state]
   (doseq [stick (:sticks @state)]
     (let [p0-key     (first  (:links stick))
           p0         (p0-key (:points @state))
@@ -92,7 +118,11 @@
 (defn hit-right-wall?  [x] (> x width))
 
 
-(defn constrain-point [{:keys [x y oldx oldy pinned] :as point}]
+(defn constrain-point
+  "Takes the world state as input, applies world constraints to all points. If
+  a points hits a wall, the ceiling, or the floor, a 'bounce' velocity loss is
+  calculated."
+  [{:keys [x y oldx oldy pinned] :as point}]
   (let [vx (* (- x oldx) friction)
         vy (* (- y oldy) friction)]
     (cond
@@ -104,12 +134,18 @@
       :else point)))
 
 
-(defn apply-world-constraints [state]
+(defn apply-world-constraints
+  "Takes the world state as input, applies world constraints and returns the
+  new world state"
+  [state]
   (swap! state update :points (partial map-kv constrain-point))
   state)
 
 
-(defn update-state [state]
+(defn update-state
+  "Takes the world state as input, updates points, applies stick contraints,
+  applies world constraints and returns the new world state."
+  [state]
   (->> state
        (update-points)
        (apply-stick-constraints)
@@ -121,13 +157,16 @@
 ;; Rendering and user interaction ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn setup []
+(defn setup
+  "Initialize the quil framework."
+  []
   (quil/frame-rate  30)
   (quil/background 255)
   (atom world))
 
 
 (defn draw [state]
+  "Takes the world state as input and draws all points and sticks in it."
   (quil/background 255)
   (quil/fill 0)
   (doseq [point (vals (:points @state))]
@@ -139,7 +178,9 @@
       (quil/line (:x p0) (:y p0) (:x p1) (:y p1)))))
 
 
-(defn key-pressed [state event]
+(defn key-pressed
+  "Handle key-press event used to load different types of worlds."
+  [state event]
   (let [k (:raw-key event)]
     (cond
       (= \c k) (reset! state (load-world (load-a-file "cloth.edn")))
