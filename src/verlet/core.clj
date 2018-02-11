@@ -34,8 +34,8 @@
 (defrecord Point [x y oldx oldy pinned])
 
 (defn distance-map [p0 p1]
-  (let [dx (- (:x p1) (:x p0))
-        dy (- (:y p1) (:y p0))
+  (let [dx       (- (:x p1) (:x p0))
+        dy       (- (:y p1) (:y p0))
         distance (Math/sqrt (+ (* dx dx) (* dy dy)))]
     {:dx dx :dy dy :distance (if (= 0.0 distance) 0.0000000000001 distance)}))
 
