@@ -20,8 +20,8 @@
 
 
 (defn map-kv
-  "Takes a function and a map as input and returns the result of applying the
-  function to the value of each key."
+  "Takes a function and an associative collection as input and returns the
+  result of applying the function to the value of each key."
   [f coll]
   (reduce-kv (fn [m k v] (assoc m k (f v))) (empty coll) coll))
 
@@ -39,6 +39,11 @@
 
 (defrecord Point [x y oldx oldy pinned])
 
+
+(defn velocity [new-val old-val]
+  (* (- new-val old-val) friction))
+
+
 (defn distance-map
   "Calculates distances between 2 points and returns a map with dx, dy and
   distance. To prevent division by zero, returns a little more than zero when
@@ -55,8 +60,8 @@
   a newly constructed point otherwise. The newly constructed point will take
   the points' velocity and the specified friction and gravity into account."
   [{:keys [x y oldx oldy pinned] :as point}]
-  (let [vx (* (- x oldx) friction)
-        vy (* (- y oldy) friction)]
+  (let [vx (velocity x oldx)
+        vy (velocity y oldy)]
     (if pinned
       point
       (->Point (+ x vx) (+ y vy gravity) x y pinned))))
@@ -123,8 +128,8 @@
   a points hits a wall, the ceiling, or the floor, a 'bounce' velocity loss is
   calculated."
   [{:keys [x y oldx oldy pinned] :as point}]
-  (let [vx (* (- x oldx) friction)
-        vy (* (- y oldy) friction)]
+  (let [vx (velocity x oldx)
+        vy (velocity y oldy)]
     (cond
       (hit-floor?      y) (->Point x height oldx (+ height (* vy bounce)) pinned)
       (hit-ceiling?    y) (->Point x 0 oldx (* vy bounce) pinned)
@@ -189,17 +194,25 @@
   state)
 
 
-(defn mouse-point [{:keys [x y p-x p-y]}]
+(defn mouse-point
+  "helper function to transform mouse events into a mouse-point in order to
+  reuse point functions."
+  [{:keys [x y p-x p-y]}]
   (->Point x y p-x p-y nil))
 
 
-(defn near-mouse-press? [mouse-point point]
+(defn near-mouse-press?
+  "Determine if the user clicked near a point in the world."
+  [mouse-point point]
   (let [distance (distance-map mouse-point (val point))]
     (and (< (Math/abs (:dx distance)) 10)
          (< (Math/abs (:dy distance)) 10))))
 
 
-(defn mouse-pressed [state event]
+(defn mouse-pressed
+  "On mouse-pressed event determine is mouse was pressed near a point in the
+  world an if that's the case, remember which point the user is now dragging."
+  [state event]
   (let [point (some #(when (near-mouse-press? (mouse-point event) %) %) (:points @state))]
     (if (nil? point)
       (swap! state assoc :dragging nil)
@@ -207,19 +220,30 @@
   state)
 
 
-(defn mouse-dragged [state event]
+(defn mouse-dragged
+  "On mouse-dragged event, change the position of the dragged point to the last
+  coordinate of the mouse."
+  [state event]
   (if (nil? (:dragging @state))
     state
     (swap! state assoc-in [:points (:dragging @state)] (mouse-point event)))
   state)
 
 
-(defn mouse-released [state event]
+(defn mouse-released
+  "On mouse-released event, stop dragging."
+  [state event]
   (swap! state assoc :dragging nil)
   state)
 
 
-(defn -main []
+(defn -main
+  "Setup quil in functional mode which basically means telling the quil
+  library which functions to call given certain events. In functional mode,
+  quil will pass the value coming out of the setup function to every other
+  function as the first argument. For UI events (mouse etc), it will also pass
+  the UI event as a second argument."
+  []
   (quil/sketch
     :host           -main
     :title          "verlet"
