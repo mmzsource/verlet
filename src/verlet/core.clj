@@ -4,9 +4,11 @@
             [quil.core :as quil]
             [quil.middleware :as quil-mw]))
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;;      Helpers       ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 (defn load-a-file [filename]
   "Takes a filename as input and converts it to a file"
@@ -25,9 +27,11 @@
   [f coll]
   (reduce-kv (fn [m k v] (assoc m k (f v))) (empty coll) coll))
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Physics Simulation ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 (def height   500)   ;; world height
 (def width    500)   ;; world width
@@ -35,13 +39,15 @@
 (def gravity  0.5)   ;; world gravity
 (def friction 0.995) ;; 0.5% velocity loss in every step
 
-(def world (load-world (load-a-file "particles.edn")))
+
+(defn velocity [new-val old-val]
+  (* (- new-val old-val) friction))
+
 
 (defrecord Point [x y oldx oldy pinned])
 
 
-(defn velocity [new-val old-val]
-  (* (- new-val old-val) friction))
+(def world (load-world (load-a-file "particles.edn")))
 
 
 (defn distance-map
@@ -75,12 +81,12 @@
   state)
 
 
-(defn calc-stick-constraint
+(defn apply-stick-constraint
   "Takes 2 points and the stick connecting them as input and calculates the new
   positions of the points taking the sticks' length into account. It calculates
   the percentage difference between the actual distance of the 2 points and the
   length of the stick. It then moves both points towards the correct length of
-  their connecting stick. That is, if the point isn't 'pinned' in the world"
+  their connecting stick. (But only if the point isn't 'pinned' in the world)"
   [stick p0 p1]
   (let [distance-map (distance-map p0 p1)
         difference   (- (:length stick) (:distance distance-map))
@@ -106,12 +112,12 @@
   "Takes the world state as input, applies stick constraints and returns the
   new world state."
   [state]
-  (doseq [stick (:sticks @state)]
+  (doseq [stick      (:sticks @state)]
     (let [p0-key     (first  (:links stick))
           p0         (p0-key (:points @state))
           p1-key     (last   (:links stick))
           p1         (p1-key (:points @state))
-          new-points (calc-stick-constraint stick p0 p1)]
+          new-points (apply-stick-constraint stick p0 p1)]
       (swap! state assoc-in [:points p0-key] (first new-points))
       (swap! state assoc-in [:points p1-key] (last  new-points))))
   state)
@@ -123,7 +129,7 @@
 (defn hit-right-wall?  [x] (> x width))
 
 
-(defn constrain-point
+(defn apply-world-constraint
   "Takes the world state as input, applies world constraints to all points. If
   a points hits a wall, the ceiling, or the floor, a 'bounce' velocity loss is
   calculated."
@@ -143,7 +149,7 @@
   "Takes the world state as input, applies world constraints and returns the
   new world state"
   [state]
-  (swap! state update :points (partial map-kv constrain-point))
+  (swap! state update :points (partial map-kv apply-world-constraint))
   state)
 
 
@@ -161,6 +167,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Rendering and user interaction ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 (defn setup
   "Initialize the quil framework."
@@ -238,11 +245,10 @@
 
 
 (defn -main
-  "Setup quil in functional mode which basically means telling the quil
-  library which functions to call given certain events. In functional mode,
-  quil will pass the value coming out of the setup function to every other
-  function as the first argument. For UI events (mouse etc), it will also pass
-  the UI event as a second argument."
+  "Setup quil in functional mode which basically means quil will pass the value
+  coming out of the setup function to every other function as the first
+  argument. For UI events (mouse etc), it will pass the UI event as a second
+  argument."
   []
   (quil/sketch
     :host           -main
