@@ -35,16 +35,6 @@ Mouse interactions:
 - Click and drag any point
 - Unpin a pinned point
 
-## TODO
-
-- [X] Add function docs
-- [X] Update-point and constrain-point contain duplicate code (vx, vy calc)
-- [ ] apply-stick-constraints seems wrong from a concurrency perspective
-- [X] function naming could be more consistent constrain-point should be calc-world-constraint?
-- [ ] Run cloc after adding function documentation. Before function
-  documentation: 137 locs (commit hash c67a5eef92504b14f9ac63a2a5750a755f58fa5b)
-
-
 ## License
 
 Use the code the way you want it at your own risk. It is not copyrighted.

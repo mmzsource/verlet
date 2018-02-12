@@ -73,7 +73,7 @@
       (->Point (+ x vx) (+ y vy gravity) x y pinned))))
 
 
-(defn update-points
+(defn update-points!
   "Takes the world state as input, updates all the points and returns the new
   world state."
   [state]
@@ -83,10 +83,11 @@
 
 (defn apply-stick-constraint
   "Takes 2 points and the stick connecting them as input and calculates the new
-  positions of the points taking the sticks' length into account. It calculates
-  the percentage difference between the actual distance of the 2 points and the
-  length of the stick. It then moves both points towards the correct length of
-  their connecting stick. (But only if the point isn't 'pinned' in the world)"
+  positions of the points taking the length of the stick into account. It
+  calculates the percentage difference between the actual distance of the 2
+  points and the length of the stick. It then moves both points towards the
+  correct length of their connecting stick. (But only if the points aren't
+  'pinned' in the world)"
   [stick p0 p1]
   (let [distance-map (distance-map p0 p1)
         difference   (- (:length stick) (:distance distance-map))
@@ -109,17 +110,30 @@
 
 
 (defn apply-stick-constraints
-  "Takes the world state as input, applies stick constraints and returns the
-  new world state."
+  "Reduce all the :sticks of 'state' into the accumulator, and return their
+  newly created state."
   [state]
-  (doseq [stick      (:sticks @state)]
-    (let [p0-key     (first  (:links stick))
-          p0         (p0-key (:points @state))
-          p1-key     (last   (:links stick))
-          p1         (p1-key (:points @state))
-          new-points (apply-stick-constraint stick p0 p1)]
-      (swap! state assoc-in [:points p0-key] (first new-points))
-      (swap! state assoc-in [:points p1-key] (last  new-points))))
+  (reduce
+   (fn [acc stick]
+     (let [p0-key     (first  (:links stick))
+           p0         (p0-key (:points acc))
+           p1-key     (last   (:links stick))
+           p1         (p1-key (:points acc))
+           new-points (apply-stick-constraint stick p0 p1)]
+       (-> acc
+           (assoc-in [:points p0-key] (first new-points))
+           (assoc-in [:points p1-key] (last  new-points)))))
+   {:points   (:points   state)
+    :sticks   (:sticks   state)
+    :dragging (:dragging state)}
+   (:sticks state)))
+
+
+(defn apply-stick-constraints!
+  "Takes the world state atom as input, applies stick constraints and
+  returns the new world state."
+  [state]
+  (swap! state apply-stick-constraints)
   state)
 
 
@@ -145,7 +159,7 @@
       :else point)))
 
 
-(defn apply-world-constraints
+(defn apply-world-constraints!
   "Takes the world state as input, applies world constraints and returns the
   new world state"
   [state]
@@ -158,9 +172,9 @@
   applies world constraints and returns the new world state."
   [state]
   (->> state
-       (update-points)
-       (apply-stick-constraints)
-       (apply-world-constraints))
+       (update-points!)
+       (apply-stick-constraints!)
+       (apply-world-constraints!))
   state)
 
 
