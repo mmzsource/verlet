@@ -123,9 +123,7 @@
        (-> acc
            (assoc-in [:points p0-key] (first new-points))
            (assoc-in [:points p1-key] (last  new-points)))))
-   {:points   (:points   state)
-    :sticks   (:sticks   state)
-    :dragging (:dragging state)}
+   state
    (:sticks state)))
 
 
@@ -174,8 +172,7 @@
   (->> state
        (update-points!)
        (apply-stick-constraints!)
-       (apply-world-constraints!))
-  state)
+       (apply-world-constraints!)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
