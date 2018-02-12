@@ -155,7 +155,7 @@
   (update state :points (partial map-kv apply-world-constraint)))
 
 
-(defn update-state
+(defn update-state!
   "Takes the world state as input, updates points, applies stick contraints,
   applies world constraints and returns the new world state."
   [state]
@@ -215,7 +215,7 @@
          (< (Math/abs (:dy distance)) 10))))
 
 
-(defn mouse-pressed
+(defn mouse-pressed!
   "On mouse-pressed event determine is mouse was pressed near a point in the
   world an if that's the case, remember which point the user is now dragging."
   [state event]
@@ -226,7 +226,7 @@
   state)
 
 
-(defn mouse-dragged
+(defn mouse-dragged!
   "On mouse-dragged event, change the position of the dragged point to the last
   coordinate of the mouse."
   [state event]
@@ -236,7 +236,7 @@
   state)
 
 
-(defn mouse-released
+(defn mouse-released!
   "On mouse-released event, stop dragging."
   [state event]
   (swap! state assoc :dragging nil)
@@ -254,10 +254,10 @@
     :title          "verlet"
     :size           [width height]
     :setup          setup
-    :update         update-state
+    :update         update-state!
     :draw           draw
     :key-pressed    key-pressed
-    :mouse-pressed  mouse-pressed
-    :mouse-dragged  mouse-dragged
-    :mouse-released mouse-released
+    :mouse-pressed  mouse-pressed!
+    :mouse-dragged  mouse-dragged!
+    :mouse-released mouse-released!
     :middleware     [quil-mw/fun-mode]))
