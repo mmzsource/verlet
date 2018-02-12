@@ -47,9 +47,6 @@
 (defrecord Point [x y oldx oldy pinned])
 
 
-(def world (load-world (load-a-file "particles.edn")))
-
-
 (defn distance-map
   "Calculates distances between 2 points and returns a map with dx, dy and
   distance. To prevent division by zero, returns a little more than zero when
@@ -155,12 +152,14 @@
   (update state :points (partial map-kv apply-world-constraint)))
 
 
-(defn update-state!
+(defn update-state
   "Takes the world state as input, updates points, applies stick contraints,
   applies world constraints and returns the new world state."
   [state]
-  (swap! state (comp apply-world-constraints apply-stick-constraints update-points))
-  state)
+  (->> state
+       (update-points)
+       (apply-stick-constraints)
+       (apply-world-constraints)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -171,19 +170,19 @@
 (defn setup
   "Initialize the quil framework."
   []
-  (quil/frame-rate  30)
+  (quil/frame-rate 25)
   (quil/background 255)
-  (atom world))
+  (load-world (load-a-file "particles.edn")))
 
 
 (defn draw [state]
   "Takes the world state as input and draws all points and sticks in it."
   (quil/background 255)
   (quil/fill 0)
-  (doseq [point (vals (:points @state))]
+  (doseq [point (vals (:points state))]
     (quil/ellipse (:x point) (:y point) 7 7))
-  (doseq [stick (:sticks @state)]
-    (let [points (:points @state)
+  (doseq [stick (:sticks state)]
+    (let [points (:points state)
           p0     ((first (:links stick)) points)
           p1     ((last  (:links stick)) points)]
       (quil/line (:x p0) (:y p0) (:x p1) (:y p1)))))
@@ -192,12 +191,12 @@
 (defn key-pressed
   "Handle key-press event used to load different types of worlds."
   [state event]
-  (let [k (:raw-key event)]
-    (cond
-      (= \c k) (reset! state (load-world (load-a-file "cloth.edn")))
-      (= \p k) (reset! state (load-world (load-a-file "particles.edn")))
-      (= \s k) (reset! state (load-world (load-a-file "sticks.edn")))))
-  state)
+  (let [k (:raw-key event)
+        s (cond
+            (= \c k) (load-world (load-a-file "cloth.edn"))
+            (= \p k) (load-world (load-a-file "particles.edn"))
+            (= \s k) (load-world (load-a-file "sticks.edn")))]
+    s))
 
 
 (defn mouse-point
@@ -215,32 +214,29 @@
          (< (Math/abs (:dy distance)) 10))))
 
 
-(defn mouse-pressed!
+(defn mouse-pressed
   "On mouse-pressed event determine is mouse was pressed near a point in the
   world an if that's the case, remember which point the user is now dragging."
   [state event]
-  (let [point (some #(when (near-mouse-press? (mouse-point event) %) %) (:points @state))]
+  (let [point (some #(when (near-mouse-press? (mouse-point event) %) %) (:points state))]
     (if (nil? point)
-      (swap! state assoc :dragging nil)
-      (swap! state assoc :dragging (key point))))
-  state)
+      (assoc state :dragging nil)
+      (assoc state :dragging (key point)))))
 
 
-(defn mouse-dragged!
+(defn mouse-dragged
   "On mouse-dragged event, change the position of the dragged point to the last
   coordinate of the mouse."
   [state event]
-  (if (nil? (:dragging @state))
+  (if (nil? (:dragging state))
     state
-    (swap! state assoc-in [:points (:dragging @state)] (mouse-point event)))
-  state)
+    (assoc-in state [:points (:dragging state)] (mouse-point event))))
 
 
-(defn mouse-released!
+(defn mouse-released
   "On mouse-released event, stop dragging."
   [state event]
-  (swap! state assoc :dragging nil)
-  state)
+  (assoc state :dragging nil))
 
 
 (defn -main
@@ -254,10 +250,10 @@
     :title          "verlet"
     :size           [width height]
     :setup          setup
-    :update         update-state!
+    :update         update-state
     :draw           draw
     :key-pressed    key-pressed
-    :mouse-pressed  mouse-pressed!
-    :mouse-dragged  mouse-dragged!
-    :mouse-released mouse-released!
+    :mouse-pressed  mouse-pressed
+    :mouse-dragged  mouse-dragged
+    :mouse-released mouse-released
     :middleware     [quil-mw/fun-mode]))
