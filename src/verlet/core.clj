@@ -73,12 +73,11 @@
       (->Point (+ x vx) (+ y vy gravity) x y pinned))))
 
 
-(defn update-points!
+(defn update-points
   "Takes the world state as input, updates all the points and returns the new
   world state."
   [state]
-  (swap! state update :points (partial map-kv update-point))
-  state)
+  (update state :points (partial map-kv update-point)))
 
 
 (defn apply-stick-constraint
@@ -110,8 +109,8 @@
 
 
 (defn apply-stick-constraints
-  "Reduce all the :sticks of 'state' into the accumulator, and return their
-  newly created state."
+  "Takes the world state atom as input, applies stick constraints and returns
+  the new world state."
   [state]
   (reduce
    (fn [acc stick]
@@ -125,14 +124,6 @@
            (assoc-in [:points p1-key] (last  new-points)))))
    state
    (:sticks state)))
-
-
-(defn apply-stick-constraints!
-  "Takes the world state atom as input, applies stick constraints and
-  returns the new world state."
-  [state]
-  (swap! state apply-stick-constraints)
-  state)
 
 
 (defn hit-floor?       [y] (> y height))
@@ -157,22 +148,19 @@
       :else point)))
 
 
-(defn apply-world-constraints!
+(defn apply-world-constraints
   "Takes the world state as input, applies world constraints and returns the
   new world state"
   [state]
-  (swap! state update :points (partial map-kv apply-world-constraint))
-  state)
+  (update state :points (partial map-kv apply-world-constraint)))
 
 
 (defn update-state
   "Takes the world state as input, updates points, applies stick contraints,
   applies world constraints and returns the new world state."
   [state]
-  (->> state
-       (update-points!)
-       (apply-stick-constraints!)
-       (apply-world-constraints!)))
+  (swap! state (comp apply-world-constraints apply-stick-constraints update-points))
+  state)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
