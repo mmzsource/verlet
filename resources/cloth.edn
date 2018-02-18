@@ -1,9 +1,9 @@
 {:points { :p0 {:x 100 :y 100 :oldx 100 :oldy 100 :pinned true}
-           :p1 {:x 150 :y 100 :oldx 150 :oldy 100 :pinned true}
-           :p2 {:x 200 :y 100 :oldx 200 :oldy 100 :pinned true}
+           :p1 {:x 150 :y 100 :oldx 150 :oldy 100}
+           :p2 {:x 200 :y 100 :oldx 200 :oldy 100}
            :p3 {:x 250 :y 100 :oldx 250 :oldy 100 :pinned true}
-           :p4 {:x 300 :y 100 :oldx 300 :oldy 100 :pinned true}
-           :p5 {:x 350 :y 100 :oldx 350 :oldy 100 :pinned true}
+           :p4 {:x 300 :y 100 :oldx 300 :oldy 100}
+           :p5 {:x 350 :y 100 :oldx 350 :oldy 100}
            :p6 {:x 400 :y 100 :oldx 400 :oldy 100 :pinned true}
 
            :p7 {:x 100 :y 150 :oldx 100 :oldy 150}
@@ -30,13 +30,13 @@
           :p26 {:x 350 :y 250 :oldx 350 :oldy 250}
           :p27 {:x 400 :y 250 :oldx 400 :oldy 250}
 
-          :p28 {:x 100 :y 300 :oldx 100 :oldy 300}
-          :p29 {:x 150 :y 300 :oldx 150 :oldy 300}
-          :p30 {:x 200 :y 300 :oldx 200 :oldy 300}
-          :p31 {:x 250 :y 300 :oldx 250 :oldy 300}
-          :p32 {:x 300 :y 300 :oldx 300 :oldy 300}
-          :p33 {:x 350 :y 300 :oldx 350 :oldy 300}
-          :p34 {:x 400 :y 300 :oldx 400 :oldy 300}}
+          :p28 {:x 100 :y 50 :oldx 100 :oldy 50}
+          :p29 {:x 150 :y 50 :oldx 150 :oldy 50}
+          :p30 {:x 200 :y 50 :oldx 200 :oldy 50}
+          :p31 {:x 250 :y 50 :oldx 250 :oldy 50}
+          :p32 {:x 300 :y 50 :oldx 300 :oldy 50}
+          :p33 {:x 350 :y 50 :oldx 350 :oldy 50}
+          :p34 {:x 400 :y 50 :oldx 400 :oldy 50}}
 
  :sticks [{:links  [ :p0  :p1] :length 50}
           {:links  [ :p1  :p2] :length 50}

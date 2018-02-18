@@ -191,12 +191,13 @@
 (defn key-pressed
   "Handle key-press event used to load different types of worlds."
   [state event]
-  (let [k (:raw-key event)
-        s (cond
-            (= \c k) (load-world (load-a-file "cloth.edn"))
-            (= \p k) (load-world (load-a-file "particles.edn"))
-            (= \s k) (load-world (load-a-file "sticks.edn")))]
-    s))
+  (let [k         (:raw-key event)
+        new-state (cond
+                   (= \c k) (load-world (load-a-file "cloth.edn"))
+                   (= \p k) (load-world (load-a-file "particles.edn"))
+                   (= \s k) (load-world (load-a-file "sticks.edn"))
+                   :else    state)]
+    new-state))
 
 
 (defn mouse-point
