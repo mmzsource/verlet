@@ -30,6 +30,9 @@ Keybindings:
 - `p` (re)start particle simulation
 - `s` (re)start stick simulation
 
+- `i` to show info screen
+- `q` to quit
+
 Mouse interactions:
 
 - Click and drag any point
