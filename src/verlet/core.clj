@@ -9,10 +9,12 @@
 ;;      Helpers       ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
+
 ;; Compiler warnings to help speed up the simulation
 ;; (run `lein compile :all` to check for those warnings)
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
+
 
 (defn load-a-file [filename]
   "Takes a filename as input and converts it to a file"
@@ -37,15 +39,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defn height   ^long   [] 500) ;; world height
-(defn width    ^long   [] 500) ;; world width
-(defn bounce   ^double [] 0.9) ;; 10% velocity loss after hitting world border
-(defn gravity  ^double [] 0.5) ;; world gravity
-(defn friction ^double [] 0.995) ;; 0.5% velocity loss in every step
+(def ^:const height   500)   ;; world height
+(def ^:const width    500)   ;; world width
+(def ^:const bounce   0.9)   ;; 10% velocity loss after hitting world border
+(def ^:const gravity  0.5)   ;; world gravity
+(def ^:const friction 0.995) ;; 0.5% velocity loss in every step
 
 
 (defn velocity ^double [^double new-val ^double old-val]
-  (* (- new-val old-val) (friction)))
+  (* (- new-val old-val) friction))
 
 
 (defrecord Point [x y oldx oldy pinned])
@@ -71,7 +73,7 @@
         vy (velocity y oldy)]
     (if pinned
       point
-      (->Point (+ x vx) (+ y vy (gravity)) x y pinned))))
+      (->Point (+ x vx) (+ y vy gravity) x y pinned))))
 
 
 (defn update-points
@@ -127,10 +129,10 @@
    (:sticks state)))
 
 
-(defn hit-floor?       [^double y] (> y (height)))
+(defn hit-floor?       [^double y] (> y height))
 (defn hit-ceiling?     [^double y] (< y 0))
 (defn hit-left-wall?   [^double x] (< x 0))
-(defn hit-right-wall?  [^double x] (> x (width)))
+(defn hit-right-wall?  [^double x] (> x width))
 
 
 (defn apply-world-constraint
@@ -141,10 +143,10 @@
   (let [vx (velocity x oldx)
         vy (velocity y oldy)]
     (cond
-      (hit-floor?      y) (->Point x (height) oldx (+ (height) (* vy (bounce))) pinned)
-      (hit-ceiling?    y) (->Point x 0 oldx (* vy (bounce)) pinned)
-      (hit-left-wall?  x) (->Point 0 y (* vx (bounce)) oldy pinned)
-      (hit-right-wall? x) (->Point (width) y (+ (width) (* vx (bounce))) oldy pinned)
+      (hit-floor?      y) (->Point x height oldx (+ height (* vy bounce)) pinned)
+      (hit-ceiling?    y) (->Point x 0 oldx (* vy bounce) pinned)
+      (hit-left-wall?  x) (->Point 0 y (* vx bounce) oldy pinned)
+      (hit-right-wall? x) (->Point width y (+ width (* vx bounce)) oldy pinned)
       ;; else: free movement
       :else point)))
 
@@ -253,7 +255,7 @@
   (quil/sketch
     :host           -main
     :title          "verlet"
-    :size           [(width) (height)]
+    :size           [width height]
     :setup          setup
     :update         update-state
     :draw           draw
