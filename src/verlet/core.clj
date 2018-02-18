@@ -39,7 +39,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(def ^:const height   500)   ;; world height
+(def ^:const height   550)   ;; world height
 (def ^:const width    500)   ;; world width
 (def ^:const bounce   0.9)   ;; 10% velocity loss after hitting world border
 (def ^:const gravity  0.5)   ;; world gravity
@@ -178,17 +178,30 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+(def help-message
+  (str
+   "\nVERLET INTEGRATION\n"
+   "\nKeybindings"
+   "\n* Press c to (re)start cloth simulation"
+   "\n* Press p to (re)start particle simulation"
+   "\n* Press s to (re)start sticks simulation"
+   "\n* Press q to quit\n"
+   "\nMouse interactions:\n"
+   "\n* Click and drag any point"
+   "\n* Unpin a pinned point"))
+
+
 (defn setup
   "Initialize the quil framework."
   []
   (quil/frame-rate 25)
-  (quil/background 255)
   (load-world (load-a-file "cloth.edn")))
 
 
 (defn draw [state]
   "Takes the world state as input and draws all points and sticks in it."
   (quil/background 255)
+  (quil/text help-message 10 10)
   (quil/fill 0)
   (doseq [point (vals (:points state))]
     (quil/ellipse (:x point) (:y point) 7 7))
@@ -207,6 +220,7 @@
                    (= \c raw-key) (load-world (load-a-file "cloth.edn"))
                    (= \p raw-key) (load-world (load-a-file "particles.edn"))
                    (= \s raw-key) (load-world (load-a-file "sticks.edn"))
+                   (= \q raw-key) (quil/exit)
                    :else state)]
     new-state))
 
