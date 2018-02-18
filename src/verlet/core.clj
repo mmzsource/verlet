@@ -46,10 +46,16 @@
 (def ^:const friction 0.995) ;; 0.5% velocity loss in every step
 
 
-(defn velocity ^double [^double new-val ^double old-val]
+(defn velocity
+  "Calculates the velocity and applies a friction percentage."
+  ^double [^double new-val ^double old-val]
   (* (- new-val old-val) friction))
 
 
+;; A record containing the current x and y position and the x and y position in
+;; the previous world state. 'Pinned' is a boolean indicating if a point is
+;; pinned in space. A pinned point stays on the same coordinate. You can unpin
+;; a point by clicking and moving it with the mouse.
 (defrecord Point [x y oldx oldy pinned])
 
 
@@ -65,9 +71,9 @@
 
 
 (defn update-point
-  "Takes a point as input and returns the old point if the point is pinned and
-  a newly constructed point otherwise. The newly constructed point will take
-  the points' velocity and the specified friction and gravity into account."
+  "Takes a point as input and returns the old point if the point is pinned.
+  Returns a newly constructed point otherwise. The newly constructed point will
+  take the points' velocity and the specified friction and gravity into account."
   [{:keys [^double x ^double y oldx oldy pinned] :as point}]
   (let [vx (velocity x oldx)
         vy (velocity y oldy)]
@@ -88,8 +94,7 @@
   positions of the points taking the length of the stick into account. It
   calculates the percentage difference between the actual distance of the 2
   points and the length of the stick. It then moves both points towards the
-  correct length of their connecting stick. (But only if the points aren't
-  'pinned' in the world)"
+  correct length of their connecting stick."
   [stick p0 p1]
   (let [distance-map (distance-map p0 p1)
         difference   (- ^double (:length stick) ^double (:distance distance-map))
@@ -197,17 +202,17 @@
 (defn key-pressed
   "Handle key-press event used to load different types of worlds."
   [state event]
-  (let [k         (:raw-key event)
+  (let [raw-key   (:raw-key event)
         new-state (cond
-                   (= \c k) (load-world (load-a-file "cloth.edn"))
-                   (= \p k) (load-world (load-a-file "particles.edn"))
-                   (= \s k) (load-world (load-a-file "sticks.edn"))
-                   :else    state)]
+                   (= \c raw-key) (load-world (load-a-file "cloth.edn"))
+                   (= \p raw-key) (load-world (load-a-file "particles.edn"))
+                   (= \s raw-key) (load-world (load-a-file "sticks.edn"))
+                   :else state)]
     new-state))
 
 
 (defn mouse-point
-  "helper function to transform mouse events into a mouse-point in order to
+  "Helper function to transform mouse events into a mouse-point in order to
   reuse point functions."
   [{:keys [x y]}]
   (->Point x y x y nil))
