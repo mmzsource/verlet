@@ -178,38 +178,47 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(def help-message
+(def info-message
   (str
-   "\nVERLET INTEGRATION DEMONSTRATION\n"
-   "\nKeybindings:"
-   "\n* Press c to (re)start cloth simulation"
-   "\n* Press p to (re)start particle simulation"
-   "\n* Press s to (re)start sticks simulation"
-   "\n* Press q to quit\n"
-   "\nMouse interactions:"
-   "\n* Click and drag any point"
-   "\n* Unpin a pinned point"))
+   "\nVERLET INTEGRATION EXPERIMENT IN CLOJURE\n"
+   "\nKeybindings:\n"
+   "\n  * Press c to (re)start cloth simulation"
+   "\n  * Press p to (re)start particle simulation"
+   "\n  * Press s to (re)start sticks simulation\n"
+   "\n  * Press i to see this info screen again"
+   "\n  * Press q to quit\n"
+   "\nMouse interactions:\n"
+   "\n  * Click and drag any point"
+   "\n  * Unpin a pinned point\n"))
+
+
+(defn show-info-message
+  "Indicate in the state that the info-message should be shown on screen"
+  [state]
+  (assoc state :info-message true))
 
 
 (defn setup
   "Initialize the quil framework."
   []
   (quil/frame-rate 25)
-  (load-world (load-a-file "cloth.edn")))
+  (quil/fill 0)
+  (show-info-message (load-world (load-a-file "particles.edn"))))
 
 
 (defn draw [state]
   "Takes the world state as input and draws all points and sticks in it."
   (quil/background 255)
-  (quil/text help-message 10 10)
-  (quil/fill 0)
-  (doseq [point (vals (:points state))]
-    (quil/ellipse (:x point) (:y point) 7 7))
-  (doseq [stick (:sticks state)]
-    (let [points (:points state)
-          p0     ((first (:links stick)) points)
-          p1     ((last  (:links stick)) points)]
-      (quil/line (:x p0) (:y p0) (:x p1) (:y p1)))))
+  (if (:info-message state)
+    (quil/text info-message 20 20)
+    (do
+      (doseq [point (vals (:points state))]
+        (quil/ellipse (:x point) (:y point) 7 7))
+      (doseq [stick (:sticks state)]
+        (let [points (:points state)
+              p0     ((first (:links stick)) points)
+              p1     ((last  (:links stick)) points)]
+          (quil/line (:x p0) (:y p0) (:x p1) (:y p1)))))))
 
 
 (defn key-pressed
@@ -220,6 +229,7 @@
                    (= \c raw-key) (load-world (load-a-file "cloth.edn"))
                    (= \p raw-key) (load-world (load-a-file "particles.edn"))
                    (= \s raw-key) (load-world (load-a-file "sticks.edn"))
+                   (= \i raw-key) (show-info-message state)
                    (= \q raw-key) (quil/exit)
                    :else state)]
     new-state))
@@ -273,7 +283,7 @@
   []
   (quil/sketch
     :host           -main
-    :title          "Verlet Integration Demonstration"
+    :title          "Verlet Integration"
     :size           [width height]
     :setup          setup
     :update         update-state
