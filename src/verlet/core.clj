@@ -9,6 +9,10 @@
 ;;      Helpers       ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Compiler warnings to help speed up the simulation
+;; (run `lein compile :all` to check for those warnings)
+(set! *warn-on-reflection* true)
+(set! *unchecked-math* :warn-on-boxed)
 
 (defn load-a-file [filename]
   "Takes a filename as input and converts it to a file"
@@ -40,11 +44,11 @@
 (def friction 0.995) ;; 0.5% velocity loss in every step
 
 
-(defn velocity [new-val old-val]
-  (* (- new-val old-val) friction))
+(defn velocity [^double new-val ^double old-val]
+  (* (- new-val old-val) ^double friction))
 
 
-(defrecord Point [x y oldx oldy pinned])
+(defrecord Point [^double x ^double y ^double oldx ^double oldy pinned])
 
 
 (defn distance-map
@@ -52,9 +56,9 @@
   distance. To prevent division by zero, returns a little more than zero when
   distance happens to be exactly zero."
   [p0 p1]
-  (let [dx       (- (:x p1) (:x p0))
-        dy       (- (:y p1) (:y p0))
-        distance (Math/sqrt (+ (* dx dx) (* dy dy)))]
+  (let [dx       (- ^double (:x p1) ^double (:x p0))
+        dy       (- ^double (:y p1) ^double (:y p0))
+        distance ^double (Math/sqrt (+ (* dx dx) (* dy dy)))]
     {:dx dx :dy dy :distance (if (= 0.0 distance) 0.0000000000001 distance)}))
 
 
@@ -67,7 +71,12 @@
         vy (velocity y oldy)]
     (if pinned
       point
-      (->Point (+ x vx) (+ y vy gravity) x y pinned))))
+      (->Point
+       (+ ^double x ^double vx)
+       (+ ^double y ^double vy ^double gravity)
+       x
+       y
+       pinned))))
 
 
 (defn update-points
@@ -86,19 +95,19 @@
   'pinned' in the world)"
   [stick p0 p1]
   (let [distance-map (distance-map p0 p1)
-        difference   (- (:length stick) (:distance distance-map))
-        percentage   (/ (/ difference (:distance distance-map)) 2)
-        offsetX      (* (:dx distance-map) percentage)
-        offsetY      (* (:dy distance-map) percentage)
+        difference   (- ^double (:length stick) ^double (:distance distance-map))
+        percentage   (/ ^double (/ difference ^double (:distance distance-map)) 2)
+        offsetX      (* ^double (:dx distance-map) percentage)
+        offsetY      (* ^double (:dy distance-map) percentage)
         p0-new       (->Point
-                      (- (:x p0) offsetX)
-                      (- (:y p0) offsetY)
+                      (- ^double (:x p0) offsetX)
+                      (- ^double (:y p0) offsetY)
                       (:oldx p0)
                       (:oldy p0)
                       (:pinned p0))
         p1-new       (->Point
-                      (+ (:x p1) offsetX)
-                      (+ (:y p1) offsetY)
+                      (+ ^double (:x p1) offsetX)
+                      (+ ^double (:y p1) offsetY)
                       (:oldx p1)
                       (:oldy p1)
                       (:pinned p1))]
@@ -123,10 +132,10 @@
    (:sticks state)))
 
 
-(defn hit-floor?       [y] (> y height))
-(defn hit-ceiling?     [y] (< y 0))
-(defn hit-left-wall?   [x] (< x 0))
-(defn hit-right-wall?  [x] (> x width))
+(defn hit-floor?       [y] (> ^double y ^double height))
+(defn hit-ceiling?     [y] (< ^double y 0))
+(defn hit-left-wall?   [x] (< ^double x 0))
+(defn hit-right-wall?  [x] (> ^double x ^double width))
 
 
 (defn apply-world-constraint
@@ -137,10 +146,10 @@
   (let [vx (velocity x oldx)
         vy (velocity y oldy)]
     (cond
-      (hit-floor?      y) (->Point x height oldx (+ height (* vy bounce)) pinned)
-      (hit-ceiling?    y) (->Point x 0 oldx (* vy bounce) pinned)
-      (hit-left-wall?  x) (->Point 0 y (* vx bounce) oldy pinned)
-      (hit-right-wall? x) (->Point width y (+ width (* vx bounce)) oldy pinned)
+      (hit-floor?      y) (->Point x height oldx (+ ^double height (* ^double vy ^double bounce)) pinned)
+      (hit-ceiling?    y) (->Point x 0 oldx (* ^double vy ^double bounce) pinned)
+      (hit-left-wall?  x) (->Point 0 y (* ^double vx ^double bounce) oldy pinned)
+      (hit-right-wall? x) (->Point width y (+ ^double width (* ^double vx ^double bounce)) oldy pinned)
       ;; else: free movement
       :else point)))
 
@@ -203,16 +212,16 @@
 (defn mouse-point
   "helper function to transform mouse events into a mouse-point in order to
   reuse point functions."
-  [{:keys [x y p-x p-y]}]
-  (->Point x y p-x p-y nil))
+  [{:keys [x y]}]
+  (->Point x y x y nil))
 
 
 (defn near-mouse-press?
   "Determine if the user clicked near a point in the world."
   [mouse-point point]
   (let [distance (distance-map mouse-point (val point))]
-    (and (< (Math/abs (:dx distance)) 10)
-         (< (Math/abs (:dy distance)) 10))))
+    (and (< (Math/abs ^double (:dx distance)) 10)
+         (< (Math/abs ^double (:dy distance)) 10))))
 
 
 (defn mouse-pressed
