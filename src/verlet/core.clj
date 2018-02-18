@@ -180,13 +180,13 @@
 
 (def help-message
   (str
-   "\nVERLET INTEGRATION\n"
-   "\nKeybindings"
+   "\nVERLET INTEGRATION DEMONSTRATION\n"
+   "\nKeybindings:"
    "\n* Press c to (re)start cloth simulation"
    "\n* Press p to (re)start particle simulation"
    "\n* Press s to (re)start sticks simulation"
    "\n* Press q to quit\n"
-   "\nMouse interactions:\n"
+   "\nMouse interactions:"
    "\n* Click and drag any point"
    "\n* Unpin a pinned point"))
 
@@ -273,7 +273,7 @@
   []
   (quil/sketch
     :host           -main
-    :title          "verlet"
+    :title          "Verlet Integration Demonstration"
     :size           [width height]
     :setup          setup
     :update         update-state
@@ -282,4 +282,5 @@
     :mouse-pressed  mouse-pressed
     :mouse-dragged  mouse-dragged
     :mouse-released mouse-released
+    :features       [:exit-on-close]
     :middleware     [quil-mw/fun-mode]))
