@@ -37,18 +37,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(def height   500)   ;; world height
-(def width    500)   ;; world width
-(def bounce   0.9)   ;; 10% velocity loss after hitting world border
-(def gravity  0.5)   ;; world gravity
-(def friction 0.995) ;; 0.5% velocity loss in every step
+(defn height   ^long   [] 500) ;; world height
+(defn width    ^long   [] 500) ;; world width
+(defn bounce   ^double [] 0.9) ;; 10% velocity loss after hitting world border
+(defn gravity  ^double [] 0.5) ;; world gravity
+(defn friction ^double [] 0.995) ;; 0.5% velocity loss in every step
 
 
-(defn velocity [^double new-val ^double old-val]
-  (* (- new-val old-val) ^double friction))
+(defn velocity ^double [^double new-val ^double old-val]
+  (* (- new-val old-val) (friction)))
 
 
-(defrecord Point [^double x ^double y ^double oldx ^double oldy pinned])
+(defrecord Point [x y oldx oldy pinned])
 
 
 (defn distance-map
@@ -58,7 +58,7 @@
   [p0 p1]
   (let [dx       (- ^double (:x p1) ^double (:x p0))
         dy       (- ^double (:y p1) ^double (:y p0))
-        distance ^double (Math/sqrt (+ (* dx dx) (* dy dy)))]
+        distance (Math/sqrt (+ (* dx dx) (* dy dy)))]
     {:dx dx :dy dy :distance (if (= 0.0 distance) 0.0000000000001 distance)}))
 
 
@@ -66,17 +66,12 @@
   "Takes a point as input and returns the old point if the point is pinned and
   a newly constructed point otherwise. The newly constructed point will take
   the points' velocity and the specified friction and gravity into account."
-  [{:keys [x y oldx oldy pinned] :as point}]
+  [{:keys [^double x ^double y oldx oldy pinned] :as point}]
   (let [vx (velocity x oldx)
         vy (velocity y oldy)]
     (if pinned
       point
-      (->Point
-       (+ ^double x ^double vx)
-       (+ ^double y ^double vy ^double gravity)
-       x
-       y
-       pinned))))
+      (->Point (+ x vx) (+ y vy (gravity)) x y pinned))))
 
 
 (defn update-points
@@ -132,10 +127,10 @@
    (:sticks state)))
 
 
-(defn hit-floor?       [y] (> ^double y ^double height))
-(defn hit-ceiling?     [y] (< ^double y 0))
-(defn hit-left-wall?   [x] (< ^double x 0))
-(defn hit-right-wall?  [x] (> ^double x ^double width))
+(defn hit-floor?       [^double y] (> y (height)))
+(defn hit-ceiling?     [^double y] (< y 0))
+(defn hit-left-wall?   [^double x] (< x 0))
+(defn hit-right-wall?  [^double x] (> x (width)))
 
 
 (defn apply-world-constraint
@@ -146,10 +141,10 @@
   (let [vx (velocity x oldx)
         vy (velocity y oldy)]
     (cond
-      (hit-floor?      y) (->Point x height oldx (+ ^double height (* ^double vy ^double bounce)) pinned)
-      (hit-ceiling?    y) (->Point x 0 oldx (* ^double vy ^double bounce) pinned)
-      (hit-left-wall?  x) (->Point 0 y (* ^double vx ^double bounce) oldy pinned)
-      (hit-right-wall? x) (->Point width y (+ ^double width (* ^double vx ^double bounce)) oldy pinned)
+      (hit-floor?      y) (->Point x (height) oldx (+ (height) (* vy (bounce))) pinned)
+      (hit-ceiling?    y) (->Point x 0 oldx (* vy (bounce)) pinned)
+      (hit-left-wall?  x) (->Point 0 y (* vx (bounce)) oldy pinned)
+      (hit-right-wall? x) (->Point (width) y (+ (width) (* vx (bounce))) oldy pinned)
       ;; else: free movement
       :else point)))
 
@@ -258,7 +253,7 @@
   (quil/sketch
     :host           -main
     :title          "verlet"
-    :size           [width height]
+    :size           [(width) (height)]
     :setup          setup
     :update         update-state
     :draw           draw
