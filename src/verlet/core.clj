@@ -16,8 +16,9 @@
 (set! *unchecked-math* :warn-on-boxed)
 
 
-(defn load-a-file [filename]
+(defn load-a-file
   "Takes a filename as input and converts it to a file"
+  [filename]
   (io/file (io/resource filename)))
 
 
@@ -75,10 +76,10 @@
   Returns a newly constructed point otherwise. The newly constructed point will
   take the points' velocity and the specified friction and gravity into account."
   [{:keys [^double x ^double y oldx oldy pinned] :as point}]
-  (let [vx (velocity x oldx)
-        vy (velocity y oldy)]
-    (if pinned
-      point
+  (if pinned
+    point
+    (let [vx (velocity x oldx)
+          vy (velocity y oldy)]
       (->Point (+ x vx) (+ y vy gravity) x y pinned))))
 
 
@@ -117,8 +118,8 @@
 
 
 (defn apply-stick-constraints
-  "Takes the world state atom as input, applies stick constraints and returns
-  the new world state."
+  "Takes the world state as input, applies stick constraints and returns the new
+  world state."
   [state]
   (reduce
    (fn [acc stick]
@@ -206,8 +207,11 @@
   (show-info-message (load-world (load-a-file "particles.edn"))))
 
 
-(defn draw [state]
-  "Takes the world state as input and draws all points and sticks in it."
+(defn draw
+  "Takes the world state as input, clears the canvas and draws all points and
+  sticks found in the world state. Shows the info-message at startup and when
+  requested by the user."
+  [state]
   (quil/background 255)
   (if (:info-message state)
     (quil/text info-message 20 20)
@@ -222,7 +226,7 @@
 
 
 (defn key-pressed
-  "Handle key-press event used to load different types of worlds."
+  "Handle key-press events, e.g. to load different types of worlds."
   [state event]
   (let [raw-key   (:raw-key event)
         new-state (cond
