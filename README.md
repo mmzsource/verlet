@@ -26,9 +26,9 @@ can interact with mouse and keyboard.
 
 Keybindings:
 
+- `c` (re)start cloth simulation
 - `p` (re)start particle simulation
 - `s` (re)start stick simulation
-- `c` (re)start cloth simulation
 
 Mouse interactions:
 

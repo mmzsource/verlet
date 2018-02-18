@@ -178,7 +178,7 @@
   []
   (quil/frame-rate 25)
   (quil/background 255)
-  (load-world (load-a-file "particles.edn")))
+  (load-world (load-a-file "cloth.edn")))
 
 
 (defn draw [state]
