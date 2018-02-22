@@ -62,13 +62,12 @@
 
 (defn distance-map
   "Calculates distances between 2 points and returns a map with dx, dy and
-  distance. To prevent division by zero, returns a little more than zero when
-  distance happens to be exactly zero."
+  distance."
   [p0 p1]
   (let [dx       (- ^double (:x p1) ^double (:x p0))
         dy       (- ^double (:y p1) ^double (:y p0))
         distance (Math/sqrt (+ (* dx dx) (* dy dy)))]
-    {:dx dx :dy dy :distance (if (= 0.0 distance) 0.0000000000001 distance)}))
+    {:dx dx :dy dy :distance distance}))
 
 
 (defn update-point
