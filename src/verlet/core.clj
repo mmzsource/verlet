@@ -183,7 +183,7 @@
    "\nVERLET INTEGRATION EXPERIMENT IN CLOJURE\n"
    "\nKeybindings:\n"
    "\n  * Press c to (re)start cloth simulation"
-   "\n  * Press p to (re)start particle simulation"
+   "\n  * Press p to (re)start points simulation"
    "\n  * Press s to (re)start sticks simulation\n"
    "\n  * Press i to see this info screen again"
    "\n  * Press q to quit\n"
@@ -203,7 +203,7 @@
   []
   (quil/frame-rate 25)
   (quil/fill 0)
-  (show-info-message (load-world (load-a-file "particles.edn"))))
+  (show-info-message (load-world (load-a-file "points.edn"))))
 
 
 (defn draw
@@ -230,7 +230,7 @@
   (let [raw-key   (:raw-key event)
         new-state (cond
                    (= \c raw-key) (load-world (load-a-file "cloth.edn"))
-                   (= \p raw-key) (load-world (load-a-file "particles.edn"))
+                   (= \p raw-key) (load-world (load-a-file "points.edn"))
                    (= \s raw-key) (load-world (load-a-file "sticks.edn"))
                    (= \i raw-key) (show-info-message state)
                    (= \q raw-key) (quil/exit)
