@@ -2,8 +2,8 @@
 
 This repo uses verlet integration to simulate a world with:
 
-- Particles
-- Sticks connecting particles
+- Points
+- Sticks connecting points
 - A cloth
 
 It was mostly inspired by [this paper by Thomas
@@ -27,7 +27,7 @@ can interact with mouse and keyboard.
 Keybindings:
 
 - `c` (re)start cloth simulation
-- `p` (re)start particle simulation
+- `p` (re)start point simulation
 - `s` (re)start stick simulation
 
 - `i` to show info screen
