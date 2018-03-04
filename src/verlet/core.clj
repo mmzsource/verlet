@@ -133,10 +133,19 @@
 
 
 (defn apply-world-constraint
-  "Takes the world state as input, applies world constraints to all points. If
-  a points hits a wall, the ceiling, or the floor, a 'bounce' velocity loss is
-  calculated."
-  [{:keys [^ double x ^ double y ^ double oldx ^ double oldy pinned] :as point}]
+  "Takes a point as input and applies world constraints to that point.
+  Imagine a point moved from A to B in the last point update. This means a
+  point record is persisted with its 'x' and 'y' being the coordinates of B
+  and 'oldx' and 'oldy' being the coordinates of A.
+  If a wall line crossed the imaginary line A-B, the point history should be
+  rewritten. In essence, line A-B is mirrored in the wall it hits, giving rise
+  to another imaginary line C-D where C mirrors A and D mirrors B.
+  The simulation will take a little velocity loss into account because of the
+  bounce. Therefore, a point D' is calculated on the imaginary line C-D, using
+  the x and y velocities multiplied by a bounce factor.
+  In the next point update (now containing C-D' coordinates instead of A-B
+  coordinates), the point will fly off in exactly the right direction."
+  [{:keys [^double x ^double y ^double oldx ^double oldy pinned] :as point}]
   (let [vxb (* (velocity x oldx) bounce)
         vyb (* (velocity y oldy) bounce)]
     (cond
