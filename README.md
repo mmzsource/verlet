@@ -26,6 +26,7 @@ can interact with mouse and keyboard.
 
 Keybindings:
 
+- `b` (re)start block simulation
 - `c` (re)start cloth simulation
 - `p` (re)start point simulation
 - `s` (re)start stick simulation
