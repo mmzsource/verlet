@@ -1,0 +1,14 @@
+{:points {:p0 {:x 350 :y 100 :oldx 350 :oldy 100}
+          :p1 {:x 400 :y 100 :oldx 400 :oldy 100}
+          :p2 {:x 350 :y 150 :oldx 350 :oldy 150}
+          :p3 {:x 400 :y 150 :oldx 400 :oldy 150}
+          :p4 {:x 250 :y 100 :oldx 250 :oldy 100 :pinned true}
+          :p5 {:x 300 :y 100 :oldx 300 :oldy 100}}
+ :sticks [{:links [:p0 :p1] :length 50}
+          {:links [:p0 :p2] :length 50}
+          {:links [:p0 :p3] :length 71}
+          {:links [:p1 :p2] :length 71}
+          {:links [:p1 :p3] :length 50}
+          {:links [:p2 :p3] :length 50}
+          {:links [:p4 :p5] :length 50}
+          {:links [:p5 :p0] :length 50}]}

@@ -187,6 +187,7 @@
   (str
    "\nVERLET INTEGRATION EXPERIMENT IN CLOJURE\n"
    "\nKeybindings:\n"
+   "\n  * Press b to (re)start block simulation"
    "\n  * Press c to (re)start cloth simulation"
    "\n  * Press p to (re)start points simulation"
    "\n  * Press s to (re)start sticks simulation\n"
@@ -234,6 +235,7 @@
   [state event]
   (let [raw-key   (:raw-key event)
         new-state (cond
+                   (= \b raw-key) (load-world (load-a-file "blocks.edn"))
                    (= \c raw-key) (load-world (load-a-file "cloth.edn"))
                    (= \p raw-key) (load-world (load-a-file "points.edn"))
                    (= \s raw-key) (load-world (load-a-file "sticks.edn"))
