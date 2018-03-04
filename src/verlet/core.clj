@@ -145,13 +145,17 @@
   a points hits a wall, the ceiling, or the floor, a 'bounce' velocity loss is
   calculated."
   [{:keys [x y oldx oldy pinned] :as point}]
-  (let [vx (velocity x oldx)
-        vy (velocity y oldy)]
+  (let [vxb (* (velocity x oldx) bounce)
+        vyb (* (velocity y oldy) bounce)]
     (cond
-      (hit-floor?      y) (->Point x height oldx (+ height (* vy bounce)) pinned)
-      (hit-ceiling?    y) (->Point x 0 oldx (* vy bounce) pinned)
-      (hit-left-wall?  x) (->Point 0 y (* vx bounce) oldy pinned)
-      (hit-right-wall? x) (->Point width y (+ width (* vx bounce)) oldy pinned)
+      (hit-floor?      y) (let [miry (+ height height (- oldy))]
+                             (->Point  (+ oldx vxb) (- miry vyb) oldx miry pinned))
+      (hit-ceiling?    y) (let [miry (- oldy)]
+                             (->Point (+ oldx vxb) (+ miry (- vyb)) oldx miry pinned))
+      (hit-left-wall?  x) (let [mirx (- oldx)]
+                             (->Point (+ mirx (- vxb)) (+ oldy vyb) mirx oldy pinned))
+      (hit-right-wall? x) (let [mirx (+ width width (- oldx))]
+                             (->Point (- mirx vxb) (+ oldy vyb) mirx oldy pinned))
       ;; else: free movement
       :else point)))
 
@@ -194,8 +198,8 @@
 
 (defn show-info-message
   "Indicate in the state that the info-message should be shown on screen"
-  [state]
-  (assoc state :info-message true))
+  []
+  {:info-message true})
 
 
 (defn setup
@@ -203,7 +207,7 @@
   []
   (quil/frame-rate 25)
   (quil/fill 0)
-  (show-info-message (load-world (load-a-file "points.edn"))))
+  (show-info-message))
 
 
 (defn draw
@@ -232,7 +236,7 @@
                    (= \c raw-key) (load-world (load-a-file "cloth.edn"))
                    (= \p raw-key) (load-world (load-a-file "points.edn"))
                    (= \s raw-key) (load-world (load-a-file "sticks.edn"))
-                   (= \i raw-key) (show-info-message state)
+                   (= \i raw-key) (show-info-message)
                    (= \q raw-key) (quil/exit)
                    :else state)]
     new-state))
