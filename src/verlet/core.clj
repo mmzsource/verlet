@@ -144,7 +144,7 @@
   "Takes the world state as input, applies world constraints to all points. If
   a points hits a wall, the ceiling, or the floor, a 'bounce' velocity loss is
   calculated."
-  [{:keys [x y oldx oldy pinned] :as point}]
+  [{:keys [^ double x ^ double y ^ double oldx ^ double oldy pinned] :as point}]
   (let [vxb (* (velocity x oldx) bounce)
         vyb (* (velocity y oldy) bounce)]
     (cond
