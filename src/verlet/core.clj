@@ -63,9 +63,9 @@
 (defn distance-map
   "Calculates distances between 2 points and returns a map with dx, dy and
   distance."
-  [p0 p1]
-  (let [dx       (- ^double (:x p1) ^double (:x p0))
-        dy       (- ^double (:y p1) ^double (:y p0))
+  [{^double p0x :x ^double p0y :y :as p0} {^double p1x :x ^double p1y :y :as p1}]
+  (let [dx       (- p1x p0x)
+        dy       (- p1y p0y)
         distance (Math/sqrt (+ (* dx dx) (* dy dy)))]
     {:dx dx :dy dy :distance distance}))
 
@@ -95,25 +95,17 @@
   calculates the percentage difference between the actual distance of the 2
   points and the length of the stick. It then moves both points towards the
   correct length of their connecting stick."
-  [stick p0 p1]
-  (let [distance-map (distance-map p0 p1)
-        difference   (- ^double (:length stick) ^double (:distance distance-map))
-        percentage   (/ ^double (/ difference ^double (:distance distance-map)) 2)
-        offsetX      (* ^double (:dx distance-map) percentage)
-        offsetY      (* ^double (:dy distance-map) percentage)
-        p0-new       (->Point
-                      (- ^double (:x p0) offsetX)
-                      (- ^double (:y p0) offsetY)
-                      (:oldx p0)
-                      (:oldy p0)
-                      (:pinned p0))
-        p1-new       (->Point
-                      (+ ^double (:x p1) offsetX)
-                      (+ ^double (:y p1) offsetY)
-                      (:oldx p1)
-                      (:oldy p1)
-                      (:pinned p1))]
-    [(if (:pinned p0) p0 p0-new) (if (:pinned p1) p1 p1-new)]))
+  [{^double length :length :as stick}
+   {^double p0x :x ^double p0y :y oldp0x :oldx oldp0y :oldy pinp0 :pinned :as p0}
+   {^double p1x :x ^double p1y :y oldp1x :oldx oldp1y :oldy pinp1 :pinned :as p1}]
+  (let [{:keys [^double dx ^double dy ^double distance]} (distance-map p0 p1)
+        difference (- length distance)
+        percentage (/ (/ difference distance) 2)
+        offsetX    (* dx percentage)
+        offsetY    (* dy percentage)
+        p0-new     (->Point (- p0x offsetX) (- p0y offsetY) oldp0x oldp0y pinp0)
+        p1-new     (->Point (+ p1x offsetX) (+ p1y offsetY) oldp1x oldp1y pinp1)]
+    [(if pinp0 p0 p0-new) (if pinp1 p1 p1-new)]))
 
 
 (defn apply-stick-constraints
