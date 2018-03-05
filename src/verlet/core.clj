@@ -100,9 +100,9 @@
    {^double p1x :x ^double p1y :y oldp1x :oldx oldp1y :oldy pinp1 :pinned :as p1}]
   (let [{:keys [^double dx ^double dy ^double distance]} (distance-map p0 p1)
         difference (- length distance)
-        percentage (/ (/ difference distance) 2)
-        offsetX    (* dx percentage)
-        offsetY    (* dy percentage)
+        fraction   (/ (/ difference distance) 2)
+        offsetX    (* dx fraction)
+        offsetY    (* dy fraction)
         p0-new     (->Point (- p0x offsetX) (- p0y offsetY) oldp0x oldp0y pinp0)
         p1-new     (->Point (+ p1x offsetX) (+ p1y offsetY) oldp1x oldp1y pinp1)]
     [(if pinp0 p0 p0-new) (if pinp1 p1 p1-new)]))
@@ -149,10 +149,10 @@
   (let [vxb (* (velocity x oldx) bounce)
         vyb (* (velocity y oldy) bounce)]
     (cond
+      (hit-ceiling?    y) (let [miry (- oldy)]
+                            (->Point (+ oldx vxb) (+ miry (- vyb)) oldx miry pinned))
       (hit-floor?      y) (let [miry (+ height height (- oldy))]
                              (->Point  (+ oldx vxb) (- miry vyb) oldx miry pinned))
-      (hit-ceiling?    y) (let [miry (- oldy)]
-                             (->Point (+ oldx vxb) (+ miry (- vyb)) oldx miry pinned))
       (hit-left-wall?  x) (let [mirx (- oldx)]
                              (->Point (+ mirx (- vxb)) (+ oldy vyb) mirx oldy pinned))
       (hit-right-wall? x) (let [mirx (+ width width (- oldx))]
