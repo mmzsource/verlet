@@ -5,6 +5,7 @@ This repo uses verlet integration to simulate a world with:
 - Points
 - Sticks connecting points
 - A cloth
+- A (swinging) block
 
 It was mostly inspired by [this paper by Thomas
 Jakobsen](http://graphics.cs.cmu.edu/nsp/course/15-869/2006/papers/jakobsen.htm).
