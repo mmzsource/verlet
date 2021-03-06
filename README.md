@@ -23,6 +23,8 @@ Prerequisites:
 
 `git clone <this repo>`
 
+Tested on java8.
+
 ## Usage
 
 Running `lein run` in the root of this project will start an applet where you
